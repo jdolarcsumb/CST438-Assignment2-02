@@ -17,12 +17,12 @@ public interface SectionRepository extends CrudRepository<Section, Integer> {
 
 
     //Line right below is commented out -- this was original file
-    //@Query("select s from Section s where current_date between s.term.addDate and s.term.addDeadline " +
-    //          " order by s.course.courseId, s.secId")
-    // List<Section> findByOpenOrderByCourseIdSectionId();
+    @Query("select s from Section s where current_date between s.term.addDate and s.term.addDeadline " +
+              " order by s.course.courseId, s.secId")
+     List<Section> findByOpenOrderByCourseIdSectionId();
 
     //Line below is added
-    @Query("select s from Course c join c.sections s " +
-            "where c.courseId=:courseId and s.term.year=:year and s.term.semester=:semester")
-    List<Section> findByCourseIdAndYearAndSemester(String courseId, int year, String semester);
+    //@Query("select s from Course c join c.sections s " +
+    //        "where c.courseId=:courseId and s.term.year=:year and s.term.semester=:semester")
+    //List<Section> findByCourseIdAndYearAndSemester(String courseId, int year, String semester);
 }
