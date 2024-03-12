@@ -101,6 +101,11 @@ public class StudentController {
         }
 
         List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId);
+        if(!enrollments.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student is already enrolled");
+        } else {
+            Enrollment enrollment = new Enrollment();
+        }
 
         // check that the Section entity with primary key sectionNo exists
         // check that today is between addDate and addDeadline for the section
