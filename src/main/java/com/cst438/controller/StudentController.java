@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,7 @@ public class StudentController {
 
     UserRepository userRepository;
     EnrollmentRepository enrollmentRepository;
+    SectionRepository sectionRepository;
 
    // student gets transcript showing list of all enrollments
    // studentId will be temporary until Login security is implemented
@@ -84,6 +86,21 @@ public class StudentController {
             @RequestParam("studentId") int studentId ) {
 
         // TODO
+        Section section = sectionRepository.findSectionBySectionNo(sectionNo);
+        if (section.getCourse().getTitle().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "section not found: " + sectionNo);
+        }
+
+        long time_ms = System.currentTimeMillis();
+        java.sql.Date today = new java.sql.Date(time_ms);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+        Date addDate = section.getTerm().getAddDate();
+        Date addDeadline = section.getTerm().getAddDeadline();
+        if(today.before(addDate) || today.after(addDeadline)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Date Invalid");
+        }
+
+        List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId);
 
         // check that the Section entity with primary key sectionNo exists
         // check that today is between addDate and addDeadline for the section
