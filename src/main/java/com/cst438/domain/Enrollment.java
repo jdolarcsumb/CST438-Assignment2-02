@@ -21,7 +21,9 @@ public class Enrollment {
     private User student;
     // create relationship between enrollment and section entities
     @ManyToOne
-    @JoinColumn(name = "section_id", nullable = false)
+    //@JoinColumn(name = "section_id", nullable = false)
+    //TODO: Double check this
+    @JoinColumn(name = "section_no", nullable = false)
     private Section section;
 
     // add getter/setter methods
