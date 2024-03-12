@@ -4,7 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import jakarta.persistence.OneToMany;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 public class Term {
@@ -14,6 +16,8 @@ public class Term {
     @Column(name="tyear")
     private int year;
     private String semester;
+    @OneToMany(mappedBy = "term")
+    List<Section> sections;
 
     @Column(name="add_date")
     private Date addDate;
@@ -89,4 +93,5 @@ public class Term {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
+    public List<Section> getSections() { return sections; }
 }
