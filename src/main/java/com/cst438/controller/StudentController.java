@@ -28,12 +28,32 @@ public class StudentController {
        // TODO
 
        List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId);
+       List<EnrollmentDTO> dtoEnrollments = new ArrayList<>();
+
+       for (Enrollment e : enrollments) {
+           dtoEnrollments.add(new EnrollmentDTO(
+                   e.getEnrollmentId(),
+                   e.getGrade(),
+                   e.getStudent().getId(),
+                   e.getStudent().getName(),
+                   e.getStudent().getEmail(),
+                   e.getSection().getCourse().getCourseId(),
+                   e.getSection().getSecId(),
+                   e.getSection().getSectionNo(),
+                   e.getSection().getBuilding(),
+                   e.getSection().getRoom(),
+                   e.getSection().getTimes(),
+                   e.getSection().getCourse().getCredits(),
+                   e.getSection().getTerm().getYear(),
+                   e.getSection().getTerm().getSemester()
+           ));
+       }
+       return dtoEnrollments;
 
        // list course_id, sec_id, title, credit, grade in chronological order
        // user must be a student
 	   // hint: use enrollment repository method findEnrollmentByStudentIdOrderByTermId
        // remove the following line when done
-       return null;
    }
 
     // student gets a list of their enrollments for the given year, semester
@@ -45,6 +65,8 @@ public class StudentController {
            @RequestParam("semester") String semester,
            @RequestParam("studentId") int studentId) {
 
+       List<Enrollment> enrollments = enrollmentRepository.findByYearAndSemesterOrderByCourseId(year, semester, studentId);
+       List<EnrollmentDTO> dtoEnrollments = new ArrayList<>();
 
      // TODO
 	 //  hint: use enrollment repository method findByYearAndSemesterOrderByCourseId
