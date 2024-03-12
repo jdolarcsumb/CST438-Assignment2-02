@@ -16,6 +16,8 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 public class StudentController {
 
+    UserRepository userRepository;
+    EnrollmentRepository enrollmentRepository;
 
    // student gets transcript showing list of all enrollments
    // studentId will be temporary until Login security is implemented
@@ -24,6 +26,8 @@ public class StudentController {
    public List<EnrollmentDTO> getTranscript(@RequestParam("studentId") int studentId) {
 
        // TODO
+
+       List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId);
 
        // list course_id, sec_id, title, credit, grade in chronological order
        // user must be a student
