@@ -26,6 +26,7 @@ public class AssignmentController {
     EnrollmentRepository enrollmentRepository;
 
 
+
     // instructor lists assignments for a section.  Assignments ordered by due date.
     // logged in user must be the instructor for the section
     @GetMapping("/sections/{secNo}/assignments")
@@ -166,6 +167,15 @@ public class AssignmentController {
     @PutMapping("/grades")
     public void updateGrades(@RequestBody List<GradeDTO> dlist) {
 
+
+        for (GradeDTO dto: dlist) {
+            Grade grade = new Grade();
+            Grade g = gradeRepository.findById(dto.gradeId()).orElse(null);
+            grade.setAssignment(g.getAssignment());
+            grade.setScore(g.getScore());
+            grade.setEnrollment(g.getEnrollment());
+            gradeRepository.save(grade);
+        }
 
         // TODO
 
