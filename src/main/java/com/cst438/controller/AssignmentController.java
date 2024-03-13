@@ -3,6 +3,7 @@ package com.cst438.controller;
 import com.cst438.domain.*;
 import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.AssignmentStudentDTO;
+import com.cst438.dto.EnrollmentDTO;
 import com.cst438.dto.GradeDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,8 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class AssignmentController {
 
+    AssignmentRepository assignmentRepository;
+
 
     // instructor lists assignments for a section.  Assignments ordered by due date.
     // logged in user must be the instructor for the section
@@ -29,12 +32,26 @@ public class AssignmentController {
             @PathVariable("secNo") int secNo) {
 
         // TODO remove the following line when done
+
+        List<Assignment> assignments = assignmentRepository.findBySectionNoOrderByDueDate(secNo);
+        List<AssignmentDTO> dtoAssignments = new ArrayList<>();
+
+        for (Assignment a : assignments) {
+            dtoAssignments.add(new AssignmentDTO(
+                    a.getAssignmentId(),
+                    a.getTitle(),
+                    a.getDueDate().toString(),
+                    a.getSection().getCourse().getCourseId(),
+                    a.getSection().getSecId(),
+                    a.getSection().getSectionNo()
+            ));
+        }
 		
 		// hint: use the assignment repository method 
 		//  findBySectionNoOrderByDueDate to return 
 		//  a list of assignments
 
-        return null;
+        return dtoAssignments;
     }
 
     // add assignment

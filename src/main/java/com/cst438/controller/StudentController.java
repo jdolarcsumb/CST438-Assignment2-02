@@ -1,6 +1,7 @@
 package com.cst438.controller;
 
 import com.cst438.domain.*;
+import com.cst438.dto.CourseDTO;
 import com.cst438.dto.EnrollmentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ public class StudentController {
     UserRepository userRepository;
     EnrollmentRepository enrollmentRepository;
     SectionRepository sectionRepository;
+    CourseRepository courseRepository;
 
    // student gets transcript showing list of all enrollments
    // studentId will be temporary until Login security is implemented
@@ -70,10 +72,29 @@ public class StudentController {
        List<Enrollment> enrollments = enrollmentRepository.findByYearAndSemesterOrderByCourseId(year, semester, studentId);
        List<EnrollmentDTO> dtoEnrollments = new ArrayList<>();
 
+       for (Enrollment e : enrollments) {
+           dtoEnrollments.add(new EnrollmentDTO(
+                   e.getEnrollmentId(),
+                   e.getGrade(),
+                   e.getStudent().getId(),
+                   e.getStudent().getName(),
+                   e.getStudent().getEmail(),
+                   e.getSection().getCourse().getCourseId(),
+                   e.getSection().getSecId(),
+                   e.getSection().getSectionNo(),
+                   e.getSection().getBuilding(),
+                   e.getSection().getRoom(),
+                   e.getSection().getTimes(),
+                   e.getSection().getCourse().getCredits(),
+                   e.getSection().getTerm().getYear(),
+                   e.getSection().getTerm().getSemester()
+           ));
+       }
+
      // TODO
 	 //  hint: use enrollment repository method findByYearAndSemesterOrderByCourseId
      //  remove the following line when done
-       return null;
+       return dtoEnrollments;
    }
 
 
@@ -101,10 +122,30 @@ public class StudentController {
         }
 
         List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId);
+        List<EnrollmentDTO> dtoEnrollments = new ArrayList<>();
         if(!enrollments.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student is already enrolled");
         } else {
-            Enrollment enrollment = new Enrollment();
+            Enrollment e = new Enrollment();
+            e.setSection(section);
+            e.setGrade(null);
+            enrollmentRepository.save(e);
+            return new EnrollmentDTO(
+                    e.getEnrollmentId(),
+                    e.getGrade(),
+                    e.getStudent().getId(),
+                    e.getStudent().getName(),
+                    e.getStudent().getEmail(),
+                    e.getSection().getCourse().getCourseId(),
+                    e.getSection().getSecId(),
+                    e.getSection().getSectionNo(),
+                    e.getSection().getBuilding(),
+                    e.getSection().getRoom(),
+                    e.getSection().getTimes(),
+                    e.getSection().getCourse().getCredits(),
+                    e.getSection().getTerm().getYear(),
+                    e.getSection().getTerm().getSemester()
+            );
         }
 
         // check that the Section entity with primary key sectionNo exists
@@ -114,7 +155,6 @@ public class StudentController {
         // be NULL until instructor enters final grades for the course.
 
         // remove the following line when done.
-        return null;
 
     }
 
@@ -123,6 +163,19 @@ public class StudentController {
    @DeleteMapping("/enrollments/{enrollmentId}")
    public void dropCourse(@PathVariable("enrollmentId") int enrollmentId) {
 
+       Enrollment e = enrollmentRepository.findById(enrollmentId).orElse(null);
+       Section s = sectionRepository.findSectionBySectionNo(e.getSection().getSectionNo());
+       long time_ms = System.currentTimeMillis();
+       java.sql.Date today = new java.sql.Date(time_ms);
+       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+       Date dropDeadline = s.getTerm().getDropDeadline();
+       if (today.after(dropDeadline)) {
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Drop Deadline Expired");
+       } else {
+           if (e != null) {
+               enrollmentRepository.delete(e);
+           }
+       }
        // TODO
        // check that today is not after the dropDeadline for section
    }
