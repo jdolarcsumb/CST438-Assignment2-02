@@ -36,7 +36,7 @@ public class Grade {
         return score;
     }
 
-    public void setScore(int score){
+    public void setScore(Integer score){
         this.score = score;
     }
 
