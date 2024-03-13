@@ -12,7 +12,6 @@ public class Assignment {
     @Column(name="assignment_id")
     private int assignmentId;
  
-    // TODO  complete this class
     // add additional attributes for title, dueDate
     @Column(name = "title")
     private String title;
