@@ -1,10 +1,7 @@
 package com.cst438.controller;
 
 import com.cst438.domain.*;
-import com.cst438.dto.AssignmentDTO;
-import com.cst438.dto.AssignmentStudentDTO;
-import com.cst438.dto.EnrollmentDTO;
-import com.cst438.dto.GradeDTO;
+import com.cst438.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +21,7 @@ import java.util.List;
 public class AssignmentController {
 
     AssignmentRepository assignmentRepository;
+    SectionRepository sectionRepository;
 
 
     // instructor lists assignments for a section.  Assignments ordered by due date.
@@ -61,9 +60,24 @@ public class AssignmentController {
     public AssignmentDTO createAssignment(
             @RequestBody AssignmentDTO dto) {
 
+        Assignment assignment = new Assignment();
+        Section section = sectionRepository.findSectionBySectionNo(dto.secNo());
+        assignment.setAssignmentId(dto.id());
+        assignment.setSection(section);
+        assignment.setTitle(dto.title());
+        assignment.setDueDate(Date.valueOf(dto.dueDate()));
+        assignmentRepository.save(assignment);
+
         // TODO remove the following line when done
 
-        return null;
+        return new AssignmentDTO(
+                assignment.getAssignmentId(),
+                assignment.getTitle(),
+                assignment.getDueDate().toString(),
+                assignment.getSection().getCourse().getCourseId(),
+                assignment.getSection().getSecId(),
+                assignment.getSection().getSectionNo()
+        );
     }
 
     // update assignment for a section.  Only title and dueDate may be changed.
@@ -125,11 +139,23 @@ public class AssignmentController {
             @RequestParam("semester") String semester) {
 
         // TODO remove the following line when done
+        List<Assignment> assignments = assignmentRepository.findByStudentIdAndYearAndSemesterOrderByDueDate(studentId, year, semester);
+        List<AssignmentStudentDTO> AssignmentStudentDTOList = new ArrayList<>();
+        for (Assignment a : assignments) {
+            AssignmentStudentDTOList.add(new AssignmentStudentDTO(
+                    a.getAssignmentId(),
+                    a.getTitle(),
+                    a.getDueDate(),
+                    a.getSection().getCourse().getCourseId(),
+                    a.getSection().getSecId(),
+                    a.getSection().getSectionNo()
+            ));
+        }
 
         // return a list of assignments and (if they exist) the assignment grade
         //  for all sections that the student is enrolled for the given year and semester
 		//  hint: use the assignment repository method findByStudentIdAndYearAndSemesterOrderByDueDate
 
-        return null;
+        return AssignmentStudentDTOList;
     }
 }
