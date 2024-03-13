@@ -20,9 +20,13 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class AssignmentController {
 
+    @Autowired
     AssignmentRepository assignmentRepository;
+    @Autowired
     SectionRepository sectionRepository;
+    @Autowired
     GradeRepository gradeRepository;
+    @Autowired
     EnrollmentRepository enrollmentRepository;
 
 
