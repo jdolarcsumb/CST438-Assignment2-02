@@ -21,7 +21,7 @@ public class Assignment {
 
     // add relationship between assignment and section entities
     @ManyToOne
-    @JoinColumn(name = "section_id", nullable = false)
+    @JoinColumn(name = "section_no", nullable = false)
     private Section section;
 
     // add getter and setter methods
