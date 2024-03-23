@@ -1,5 +1,6 @@
 package com.cst438.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -16,6 +17,7 @@ public class Term {
     @Column(name="tyear")
     private int year;
     private String semester;
+    @JsonIgnore
     @OneToMany(mappedBy = "term")
     List<Section> sections;
 
