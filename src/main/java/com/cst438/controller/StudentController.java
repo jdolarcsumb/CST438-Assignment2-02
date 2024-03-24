@@ -109,9 +109,10 @@ public class StudentController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Date Invalid");
     }
 
-    List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId);
-    List<EnrollmentDTO> dtoEnrollments = new ArrayList<>();
-    if(!enrollments.isEmpty()) {
+    Enrollment enrollment = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(sectionNo, studentId);
+    //List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId);
+    // List<EnrollmentDTO> dtoEnrollments = new ArrayList<>();
+    if (enrollment != null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student is already enrolled");
     } else {
       Enrollment e = new Enrollment();
