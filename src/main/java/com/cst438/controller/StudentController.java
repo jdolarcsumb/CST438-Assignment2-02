@@ -116,6 +116,8 @@ public class StudentController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student is already enrolled");
     } else {
       Enrollment e = new Enrollment();
+      User student = userRepository.findStudentByStudentId(studentId);
+      e.setStudent(student);
       e.setSection(section);
       e.setGrade(null);
       enrollmentRepository.save(e);
