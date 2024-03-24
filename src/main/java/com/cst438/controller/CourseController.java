@@ -34,7 +34,6 @@ public class CourseController {
     @Autowired
     UserRepository userRepository;
 
-
     // ADMIN function to create a new course
     @PostMapping("/courses")
     public CourseDTO addCourse(@RequestBody CourseDTO course) {
@@ -93,6 +92,4 @@ public class CourseController {
     public List<Term> getAllTerms() {
         return termRepository.findAllByOrderByTermIdDesc();
     }
-
-
 }
