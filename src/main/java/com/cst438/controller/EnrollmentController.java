@@ -27,8 +27,6 @@ public class EnrollmentController {
             @PathVariable("sectionNo") int sectionNo ) {
         //  hint: use enrollment repository findEnrollmentsBySectionNoOrderByStudentName method
         List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsBySectionNoOrderByStudentName(sectionNo);
-        List<EnrollmentDTO> dtoEnrollments = new ArrayList<>();
-
         return getEnrollmentDTOS(enrollments);
     }
 
