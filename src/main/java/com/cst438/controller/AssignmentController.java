@@ -219,17 +219,22 @@ public class AssignmentController {
         @RequestParam("year") int year,
         @RequestParam("semester") String semester) {
 
-        // TODO remove the following line when done
         List<Assignment> assignments = assignmentRepository.findByStudentIdAndYearAndSemesterOrderByDueDate(studentId, year, semester);
         List<AssignmentStudentDTO> AssignmentStudentDTOList = new ArrayList<>();
         for (Assignment a : assignments) {
+            Enrollment enrollment = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(a.getSection().getSectionNo(), studentId);
+            Grade grade = gradeRepository.findByEnrollmentIdAndAssignmentId(enrollment.getEnrollmentId(), a.getAssignmentId());
+            int score = 0;
+            if (grade != null) {
+                score = grade.getScore();
+            }
             AssignmentStudentDTOList.add(new AssignmentStudentDTO(
                 a.getAssignmentId(),
                 a.getTitle(),
                 a.getDueDate(),
                 a.getSection().getCourse().getCourseId(),
                 a.getSection().getSecId(),
-                a.getSection().getSectionNo()
+                score
             ));
         }
 
