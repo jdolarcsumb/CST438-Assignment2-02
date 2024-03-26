@@ -138,19 +138,16 @@ public class AssignmentController {
     public void deleteAssignment(@PathVariable("assignmentId") int assignmentId) {
         Assignment a = assignmentRepository.findById(assignmentId).orElse(null);
         // if course does not exist, do nothing.
+        // Idempotent DELETE
         if (a!=null) {
             assignmentRepository.delete(a);
         }
-        // TODO
     }
 
     // instructor gets grades for assignment ordered by student name
     // user must be instructor for the section
     @GetMapping("/assignments/{assignmentId}/grades")
     public List<GradeDTO> getAssignmentGrades(@PathVariable("assignmentId") int assignmentId) {
-
-        // TODO remove the following line when done
-
         Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
         List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsBySectionNoOrderByStudentName(assignment.getSection().getSectionNo());
         List<GradeDTO> gradeDTOS = new ArrayList<>();
@@ -196,20 +193,10 @@ public class AssignmentController {
             if (g == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This grade was not found!");
             }
-            g.setAssignment(g.getAssignment());
-            g.setScore(g.getScore());
-            g.setEnrollment(g.getEnrollment());
+            g.setScore(dto.score());
             gradeRepository.save(g);
         }
-
-        // TODO
-
-        // for each grade in the GradeDTO list, retrieve the grade entity
-        // update the score and save the entity
-
     }
-
-
 
     // student lists their assignments/grades for an enrollment ordered by due date
     // student must be enrolled in the section
