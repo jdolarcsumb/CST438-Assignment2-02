@@ -59,8 +59,8 @@ public class SectionControllerUnitTest {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(asJsonString(section)))
-                        .andReturn()
-                        .getResponse();
+                .andReturn()
+                .getResponse();
 
         // check the response code for 200 meaning OK
         assertEquals(200, response.getStatus());
