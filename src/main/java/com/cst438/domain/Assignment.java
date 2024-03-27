@@ -12,7 +12,6 @@ public class Assignment {
     @Column(name="assignment_id")
     private int assignmentId;
  
-    // TODO  complete this class
     // add additional attributes for title, dueDate
     @Column(name = "title")
     private String title;
@@ -22,7 +21,7 @@ public class Assignment {
 
     // add relationship between assignment and section entities
     @ManyToOne
-    @JoinColumn(name = "section_id", nullable = false)
+    @JoinColumn(name = "section_no", nullable = false)
     private Section section;
 
     // add getter and setter methods

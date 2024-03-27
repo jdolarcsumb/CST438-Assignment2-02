@@ -11,6 +11,6 @@ public interface CourseRepository extends CrudRepository<Course, String> {
 
     //Line added below
     @Query("select distinct s.course from Term t join t.sections s " +
-            "where t.year=:year and t.semester=:semester order by s.course.courseID")
+            "where t.year=:year and t.semester=:semester order by s.course.courseId")
     List<Course> findByYearAndSemesterOrderByCourseId(int year, String semester);
 }
