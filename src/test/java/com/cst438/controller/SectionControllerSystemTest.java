@@ -264,4 +264,67 @@ public class SectionControllerSystemTest {
        assertThrows(NoSuchElementException.class, () ->
                driver.findElement(By.xpath("//tr[td='cst499']")));
     }
+
+    @Test
+    public void instructorAddsNewAssignmentSuccessfully() throws InterruptedException {
+        WebElement addAssignmentButton = driver.findElement(By.id("addAssignment"));
+        addAssignmentButton.click();
+        Thread.sleep(SLEEP_DURATION);
+
+        driver.findElement(By.id("assignmentTitle")).sendKeys("New Assignment");
+        driver.findElement(By.id("assignmentDescription")).sendKeys("Description of the new assignment");
+        driver.findElement(By.id("dueDate")).sendKeys("2024-12-31");
+        driver.findElement(By.id("submitButton")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        String successMessage = driver.findElement(By.id("successMessage")).getText();
+        assertTrue(successMessage.contains("Assignment added successfully"));
+    }
+
+    @Test
+    public void instructorGradesAssignmentAndUploadsScores() throws InterruptedException {
+
+        List<WebElement> scoreFields = driver.findElements(By.className("studentScore"));
+        for (WebElement scoreField : scoreFields) {
+            scoreField.sendKeys("100");
+        }
+        driver.findElement(By.id("submitGrades")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        String successMessage = driver.findElement(By.id("successMessage")).getText();
+        assertTrue(successMessage.contains("Grades uploaded successfully"));
+    }
+
+    @Test
+    public void studentEnrollsInSectionSuccessfully() throws InterruptedException {
+        WebElement enrollSectionButton = driver.findElement(By.id("enrollSection"));
+        enrollSectionButton.click();
+        Thread.sleep(SLEEP_DURATION);
+
+        driver.findElement(By.id("sectionSelect")).click(); // Opens section dropdown
+        driver.findElement(By.xpath("//option[.='Section ID']")).click(); // Selects the section
+        driver.findElement(By.id("enrollButton")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        String successMessage = driver.findElement(By.id("successMessage")).getText();
+        assertTrue(successMessage.contains("Enrolled successfully"));
+    }
+
+    @Test
+    public void instructorEntersFinalClassGrades() throws InterruptedException {
+
+        List<WebElement> gradeFields = driver.findElements(By.className("finalGrade"));
+        for (WebElement gradeField : gradeFields) {
+            gradeField.sendKeys("A");
+        }
+        driver.findElement(By.id("submitFinalGrades")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        String successMessage = driver.findElement(By.id("successMessage")).getText();
+        assertTrue(successMessage.contains("Final grades submitted successfully"));
+    }
+
+
 }
+
+
