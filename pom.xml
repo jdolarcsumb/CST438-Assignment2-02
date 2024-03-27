@@ -58,6 +58,11 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- end selenium -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-devtools-v122</artifactId>
+			<version>4.18.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
