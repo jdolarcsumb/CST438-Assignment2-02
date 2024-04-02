@@ -70,7 +70,7 @@ public class AssignmentControllerSystemTest {
         driver.findElement(By.id("saveGrades")).click();
         String message = driver.findElement(By.id("editMessage")).getText();
         assertEquals("Grades saved!", message);
-        driver.findElement(By.id("closeGrades")).click();
+        driver.findElement(By.id("save")).click();
 
 
 
@@ -123,7 +123,7 @@ public class AssignmentControllerSystemTest {
 
         //Check to make sure the assignment is deleted
         assertThrows(NoSuchElementException.class, () ->
-                driver.findElement(By.xpath("//tr[td='db assignment 3 [TEST]")));
+                driver.findElement(By.xpath("//tr[td='db assignment 3 [TEST]']")));
     }
 
 }
