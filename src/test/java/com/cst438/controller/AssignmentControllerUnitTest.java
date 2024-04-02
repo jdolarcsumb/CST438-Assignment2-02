@@ -48,8 +48,8 @@ public class AssignmentControllerUnitTest {
         AssignmentDTO assignment = new AssignmentDTO(
                 0,
                 "Final Project",
-                "2024-05-01",
-                "cst363",
+                "2024-04-18",
+                "cst599",
                 1,
                 9
         );
@@ -99,8 +99,8 @@ public class AssignmentControllerUnitTest {
         AssignmentDTO assignment = new AssignmentDTO(
                 0,
                 "Final Project",
-                "2024-05-20",
-                "cst363",
+                "2024-04-20",
+                "cst599",
                 1,
                 9
         );
@@ -132,8 +132,8 @@ public class AssignmentControllerUnitTest {
         AssignmentDTO assignment = new AssignmentDTO(
                 0,
                 "Integers: What are they?",
-                "2024-05-20",
-                "cst363",
+                "2024-04-20",
+                "cst599",
                 1,
                 58
         );
@@ -255,8 +255,8 @@ public class AssignmentControllerUnitTest {
         AssignmentDTO assignment = new AssignmentDTO(
                 10,
                 "Final Project",
-                "2024-05-20",
-                "cst363",
+                "2024-04-20",
+                "cst599",
                 1,
                 9
         );

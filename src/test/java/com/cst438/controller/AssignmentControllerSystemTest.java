@@ -16,9 +16,7 @@ public class AssignmentControllerSystemTest {
 
     //Path to selenium driver
     public static final String CHROME_DRIVER_FILE_LOCATION =
-            "/Users/kyleabsten/Library/Mobile Documents/com~apple~CloudDocs/CSUMB/CST438_SoftwareEngineering/downloads/chromedriver-mac-arm64/chromedriver";
-
-    //Url of react/nodejs server
+            "C:/chromedriver-win64/chromedriver.exe";
     public static final String reactURL = "http://localhost:3000";
 
     //Sleep variable = 1 second
@@ -43,19 +41,6 @@ public class AssignmentControllerSystemTest {
         Thread.sleep(SLEEP_DURATION);
 
     }
-
-    /*
-    @AfterEach
-    public void destroyDriver() {
-        if (driver != null) {
-            //Quit driver
-            driver.close();
-            driver.quit();
-            driver = null;
-        }
-    }
-
-     */
 
     @Test
     public void systemTestGradeAssignment() throws Exception {
