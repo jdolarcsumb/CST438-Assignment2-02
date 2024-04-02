@@ -4,9 +4,7 @@ import com.cst438.domain.*;
 import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.GradeDTO;
 import static org.mockito.ArgumentMatchers.anyInt;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
@@ -19,13 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import java.sql.Date;
 import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
+import java.util.Optional;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,11 +46,14 @@ public class AssignmentControllerUnitTest {
 
     @Test
     public void testCreateAssignmentSuccess() throws Exception {
+        Term term = new Term();
+        term.setStartDate(Date.valueOf("2024-01-01"));
+        term.setEndDate(Date.valueOf("2024-05-01"));
+
         Section section = new Section();
         section.setSectionNo(101);
         section.setCourse(new Course());
-        section.getTerm().setStartDate(Date.valueOf("2024-01-01"));
-        section.getTerm().setEndDate(Date.valueOf("2024-05-01"));
+        section.setTerm(term);
 
         Assignment assignment = new Assignment();
         assignment.setAssignmentId(1);
@@ -99,6 +97,7 @@ public class AssignmentControllerUnitTest {
     @Test
     public void gradeInvalidAssignment() throws Exception {
         int invalidAssignmentId = 999; // Assuming 999 is an ID that doesn't exist
+        given(assignmentRepository.findById(invalidAssignmentId)).willReturn(Optional.empty());
         mockMvc.perform(MockMvcRequestBuilders.get("/assignments/{assignmentId}/grades", invalidAssignmentId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound()); // Assuming the controller returns 404 for non-existent resources
