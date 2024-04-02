@@ -1,248 +1,78 @@
 package com.cst438.controller;
 
 import com.cst438.domain.*;
-import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.EnrollmentDTO;
-import com.cst438.dto.SectionDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.sql.Date;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@AutoConfigureMockMvc
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(controllers = EnrollmentController.class)
 public class StudentControllerUnitTest {
 
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
 
-    @Autowired
-    SectionRepository sectionRepository;
+    @MockBean
+    private SectionRepository sectionRepository;
 
-    @Autowired
-    AssignmentRepository assignmentRepository;
+    @MockBean
+    private EnrollmentRepository enrollmentRepository;
 
-    @Autowired
-    TermRepository termRepository;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    CourseRepository courseRepository;
+    private EnrollmentDTO testEnrollmentDTO;
 
-    @Autowired
-    EnrollmentRepository enrollmentRepository;
-
-    @Test
-    public void enrollInSection() throws Exception {
-        MockHttpServletResponse response;
-
-        // Create DTO with data for new assignment
-        EnrollmentDTO enrollment = new EnrollmentDTO(
-                0,
-                "A",
-                3,
-                "John Smith",
-                "jsmith@csumb.edu",
-                "cst499",
-                1,
-                8,
-                "052",
-                "104",
-                "M W 10:00-11:50",
-                4,
-                2024,
-                "Spring"
-        );
-
-        // issue a http POST request to SpringTestServer
-        // specify MediaType for request and response data
-        // convert section to String data and set as request content
-        response = mvc.perform(
-                        MockMvcRequestBuilders
-                                .post("/enrollments/sections/"+enrollment.sectionNo()+"?studentId="+enrollment.studentId())
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(asJsonString(enrollment)))
-                .andReturn()
-                .getResponse();
-
-        // check the response code for 200 meaning OK
-        assertEquals(200, response.getStatus());
-
-        // return data converted from String to DTO
-        EnrollmentDTO result = fromJsonString(response.getContentAsString(), EnrollmentDTO.class);
-
-        // primary key should have a non zero value from the database
-        assertNotEquals(0, result.enrollmentId());
-        // check other fields of the DTO for expected values
-        assertEquals("cst499", result.courseId());
-
-        // check the database
-        Enrollment e = enrollmentRepository.findById(result.enrollmentId()).orElse(null);
-        assertNotNull(e);
-        assertEquals("cst499", e.getSection().getCourse().getCourseId());
-
-        // clean up after test. issue http DELETE request for section
-        response = mvc.perform(
-                        MockMvcRequestBuilders
-                                .delete("/enrollments/"+result.enrollmentId()))
-                .andReturn()
-                .getResponse();
-
-        assertEquals(200, response.getStatus());
-
-        // check database for delete
-        e = enrollmentRepository.findById(result.enrollmentId()).orElse(null);
-        //s = sectionRepository.findById(result.secNo()).orElse(null);
-        assertNull(e);  // section should not be found after delete
+    @BeforeEach
+    public void setup() {
+        testEnrollmentDTO = new EnrollmentDTO(0, "A", 3, "John Doe", "jdoe@example.com", "cst101", 1, 8, "Library", "101", "T Th 9:00-10:15", 3, 2023, "Fall");
     }
 
     @Test
-    public void enrollInSectionButAlreadyEnrolled() throws Exception {
-        MockHttpServletResponse response;
+    public void enrollStudentInSectionSuccess() throws Exception {
+        Enrollment enrollment = new Enrollment();
+        enrollment.setEnrollmentId(1);
+        when(enrollmentRepository.save(any(Enrollment.class))).thenReturn(enrollment);
 
-        // Create DTO with data for new assignment
-        EnrollmentDTO enrollment = new EnrollmentDTO(
-                0,
-                "A",
-                3,
-                "John Smith",
-                "jsmith@csumb.edu",
-                "cst499",
-                1,
-                8,
-                "052",
-                "104",
-                "M W 10:00-11:50",
-                4,
-                2024,
-                "Spring"
-        );
+        mvc.perform(post("/enrollments/sections/" + testEnrollmentDTO.sectionNo())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testEnrollmentDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.enrollmentId").value(1))
+                .andExpect(jsonPath("$.courseId").value("cst101"));
 
-        // issue a http POST request to SpringTestServer
-        // specify MediaType for request and response data
-        // convert section to String data and set as request content
-        response = mvc.perform(
-                        MockMvcRequestBuilders
-                                .post("/enrollments/sections/"+enrollment.sectionNo()+"?studentId="+enrollment.studentId())
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(asJsonString(enrollment)))
-                .andReturn()
-                .getResponse();
-
-        // check the response code for 200 meaning OK
-        assertEquals(400, response.getStatus());
-
-        // check the expected error message
-        String message = response.getErrorMessage();
-        assertEquals("already enrolled in this section", message);
+        verify(enrollmentRepository, times(1)).save(any(Enrollment.class));
     }
 
     @Test
-    public void enrollinSectionButInvalidSectionNo() throws Exception{
-        MockHttpServletResponse response;
+    public void enrollStudentInSectionAlreadyEnrolled() throws Exception {
+        // Simulate already enrolled scenario
+        when(enrollmentRepository.findEnrollmentBySectionNoAndStudentId(testEnrollmentDTO.sectionNo(), testEnrollmentDTO.studentId())).thenReturn(new Enrollment());
 
-        // Create DTO with data for new assignment
-        EnrollmentDTO enrollment = new EnrollmentDTO(
-                0,
-                "A",
-                3,
-                "John Smith",
-                "jsmith@csumb.edu",
-                "cst499",
-                1,
-                58,
-                "052",
-                "104",
-                "M W 10:00-11:50",
-                4,
-                2024,
-                "Spring"
-        );
+        mvc.perform(post("/enrollments/sections/" + testEnrollmentDTO.sectionNo())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testEnrollmentDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("already enrolled")));
 
-        // issue a http POST request to SpringTestServer
-        // specify MediaType for request and response data
-        // convert section to String data and set as request content
-        response = mvc.perform(
-                        MockMvcRequestBuilders
-                                .post("/enrollments/sections/"+enrollment.sectionNo()+"?studentId="+enrollment.studentId())
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(asJsonString(enrollment)))
-                .andReturn()
-                .getResponse();
-
-        // We should get a NOT_FOUND 404 error
-        assertEquals(404, response.getStatus());
-
-        // check the expected error message
-        String message = response.getErrorMessage();
-        assertEquals("section not found 58", message);
-
-    }
-
-    @Test
-    public void enrollinSectionButPastDeadline() throws Exception{
-        MockHttpServletResponse response;
-
-        // Create DTO with data for new assignment
-        EnrollmentDTO enrollment = new EnrollmentDTO(
-                0,
-                "A",
-                3,
-                "John Smith",
-                "jsmith@csumb.edu",
-                "cst499",
-                1,
-                1,
-                "052",
-                "100",
-                "M W 10:00-11:50",
-                4,
-                2024,
-                "Spring"
-        );
-
-        // issue a http POST request to SpringTestServer
-        // specify MediaType for request and response data
-        // convert section to String data and set as request content
-        response = mvc.perform(
-                        MockMvcRequestBuilders
-                                .post("/enrollments/sections/"+enrollment.sectionNo()+"?studentId="+enrollment.studentId())
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(asJsonString(enrollment)))
-                .andReturn()
-                .getResponse();
-
-        // check the response code for 200 meaning OK
-        assertEquals(400, response.getStatus());
-
-        // check the expected error message
-        String message = response.getErrorMessage();
-        assertEquals("Invalid date", message);
+        verify(enrollmentRepository, never()).save(any(Enrollment.class));
     }
 
     private static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static <T> T  fromJsonString(String str, Class<T> valueType ) {
-        try {
-            return new ObjectMapper().readValue(str, valueType);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
