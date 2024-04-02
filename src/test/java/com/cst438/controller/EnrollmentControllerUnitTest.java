@@ -1,105 +1,49 @@
 package com.cst438.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.cst438.domain.*;
-import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.EnrollmentDTO;
-import com.cst438.dto.SectionDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import java.util.Arrays;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.sql.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-@AutoConfigureMockMvc
-@SpringBootTest
+@WebMvcTest(EnrollmentController.class)
 public class EnrollmentControllerUnitTest {
 
-    @Autowired
-    MockMvc mvc;
+    @MockBean
+    private EnrollmentRepository enrollmentRepository;
 
-    @Autowired
-    SectionRepository sectionRepository;
+    @InjectMocks
+    private EnrollmentController enrollmentController;
 
-    @Autowired
-    AssignmentRepository assignmentRepository;
+    @Mock
+    private MockMvc mockMvc;
 
-    @Autowired
-    TermRepository termRepository;
-
-    @Autowired
-    CourseRepository courseRepository;
-
-    @Autowired
-    EnrollmentRepository enrollmentRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    public void enterFinalClassGradesForAll() throws Exception{
-        MockHttpServletResponse response;
-
-        // Create DTO with data for new assignment
-        EnrollmentDTO enrollment0 = new EnrollmentDTO(
-                1,
-                "B",
-                3,
-                "John Smith",
-                "jsmith@csumb.edu",
-                "cst363",
-                9,
-                9,
-                "052",
-                "104",
-                "T W 10:00-11:50",
-                4,
-                2024,
-                "Spring"
+    public void enterFinalClassGradesForAll() throws Exception {
+        EnrollmentDTO enrollmentDTO = new EnrollmentDTO(
+                1, "B", 3, "John Smith", "jsmith@csumb.edu", "cst363",
+                9, 9, "052", "104", "T W 10:00-11:50", 4, 2024, "Spring"
         );
 
-        List<EnrollmentDTO>enrollments = new ArrayList<>();
-        enrollments.add(enrollment0);
+        given(enrollmentRepository.saveAll(any())).willReturn(Arrays.asList(new Enrollment()));
 
-
-
-        // issue a http POST request to SpringTestServer
-        // specify MediaType for request and response data
-        // convert section to String data and set as request content
-        response = mvc.perform(
-                        MockMvcRequestBuilders
-                                .put("/enrollments")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(asJsonString(enrollments)))
-                .andReturn()
-                .getResponse();
-
-        // check the response code for 200 meaning OK
-        assertEquals(200, response.getStatus());
-
-
+        mockMvc.perform(put("/enrollments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Arrays.asList(enrollmentDTO))))
+                .andExpect(status().isOk());
     }
 
-    private static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static <T> T  fromJsonString(String str, Class<T> valueType ) {
-        try {
-            return new ObjectMapper().readValue(str, valueType);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    // Helper methods and additional tests as needed...
 }
