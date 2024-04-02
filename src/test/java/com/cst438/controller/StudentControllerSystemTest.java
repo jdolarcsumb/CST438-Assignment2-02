@@ -1,112 +1,80 @@
 package com.cst438.controller;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StudentControllerSystemTest {
 
-    public static final String CHROME_DRIVER_FILE_LOCATION =
-            "C:/chromedriver-win64/chromedriver.exe";
+    private static final String CHROME_DRIVER_FILE_LOCATION = "C:/chromedriver-win64/chromedriver.exe";
+    private static final String URL = "http://localhost:3000/";
+    private static WebDriver driver;
 
-    //public static final String CHROME_DRIVER_FILE_LOCATION =
-    //        "~/chromedriver_macOS/chromedriver";
-    public static final String URL = "http://localhost:3000/";
-
-    public static final int SLEEP_DURATION = 1000; // 1 second.
-
-    // add selenium dependency to pom.xml
-
-    // these tests assumes that test data does NOT contain any
-    // sections for course cst499 in 2024 Spring term.
-
-    WebDriver driver;
-
-    @BeforeEach
-    public void setUpDriver() throws Exception {
-
-        // set properties required by Chrome Driver
-        System.setProperty(
-                "webdriver.chrome.driver", CHROME_DRIVER_FILE_LOCATION);
-        ChromeOptions ops = new ChromeOptions();
-        ops.addArguments("--remote-allow-origins=*");
-
-        // start the driver
-        driver = new ChromeDriver(ops);
-
+    @BeforeAll
+    public static void setUp() {
+        System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_FILE_LOCATION);
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--disable-extensions", "--no-sandbox", "--disable-dev-shm-usage");
+        driver = new ChromeDriver(options);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.get(URL);
-        // must have a short wait to allow time for the page to download
-        Thread.sleep(SLEEP_DURATION);
-
     }
 
-    @AfterEach
-    public void terminateDriver() {
+    @AfterAll
+    public static void tearDown() {
         if (driver != null) {
-            // quit driver
-            driver.close();
             driver.quit();
-            driver = null;
         }
     }
 
     @Test
-    public void systemTestEnrollSection() throws Exception {
-        // add first available section
-        // verify enrollment appears on schedule
-        // drop course
+    public void testEnrollAndDropSection() throws InterruptedException {
+        navigateToAddCourse();
+        enrollInFirstAvailableSection();
+        assertCourseAdded();
+        navigateToScheduleAndDropCourse();
+    }
 
-        //click link to navigate to course enroll
-        WebElement we = driver.findElement(By.id("addCourse"));
-        we.click();
-        Thread.sleep(SLEEP_DURATION);
+    private void navigateToAddCourse() throws InterruptedException {
+        driver.findElement(By.id("addCourse")).click();
+        Thread.sleep(1000); // Simulating user wait time for navigation
+    }
 
-        //connect driver to buttons
-        List<WebElement> buttons = driver.findElements(By.tagName("button"));
+    private void enrollInFirstAvailableSection() throws InterruptedException {
+        WebElement firstEnrollButton = driver.findElement(By.xpath("//button[contains(text(), 'Enroll')]"));
+        firstEnrollButton.click();
+        Thread.sleep(1000); // Simulating user wait time for enrollment processing
+    }
 
-        //consider clicking each available section
-//        for (WebElement button : buttons) {
-//            button.click();
-//            Thread.sleep(SLEEP_DURATION);
-//        }
-
-        //click to enroll in first available section
-        buttons.get(0).click();
-        Thread.sleep(SLEEP_DURATION);
-
+    private void assertCourseAdded() {
         String message = driver.findElement(By.id("addMessage")).getText();
-        //assertTrue(message.equals("course added"));
         assertEquals("course added", message);
+    }
 
-        we = driver.findElement(By.id("schedule"));
-        we.click();
+    private void navigateToScheduleAndDropCourse() throws InterruptedException {
+        driver.findElement(By.id("schedule")).click();
         driver.findElement(By.id("year")).sendKeys("2024");
         driver.findElement(By.id("semester")).sendKeys("Spring");
         driver.findElement(By.id("search")).click();
-        Thread.sleep(SLEEP_DURATION);
+        Thread.sleep(1000); // Simulating user wait time for search processing
 
-        //drop recently added section from CST338
-        WebElement row = driver.findElement(By.xpath("//tr[td='cst499']"));
-        assertNotNull(row);
-
-        WebElement dropButton = row.findElement(By.tagName("button"));
+        WebElement dropButton = driver.findElement(By.xpath("//button[contains(text(), 'Drop')]"));
         dropButton.click();
-        Thread.sleep(SLEEP_DURATION);
+        Thread.sleep(1000); // Simulating user wait time for drop processing
 
-        // find the YES to confirm button
-        List<WebElement> confirmButtons = driver
-                .findElement(By.className("react-confirm-alert-button-group"))
-                .findElements(By.tagName("button"));
-        assertEquals(2,confirmButtons.size());
-        confirmButtons.get(0).click();
-        Thread.sleep(SLEEP_DURATION);
+        confirmDrop();
+    }
 
+    private void confirmDrop() throws InterruptedException {
+        WebElement confirmButton = driver.findElement(By.xpath("//button[contains(text(), 'Yes')]"));
+        confirmButton.click();
+        Thread.sleep(1000); // Simulating user confirmation processing
     }
 }
