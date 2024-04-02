@@ -111,7 +111,7 @@ public class SectionControllerSystemTest {
 
         // enter data
         //  courseId: cst499,
-        driver.findElement(By.id("ecourseId")).sendKeys("cst499");
+        driver.findElement(By.id("courseId")).sendKeys("cst499");
         //  secId: 1,
         driver.findElement(By.id("secId")).sendKeys("1");
         //  year:2024,
