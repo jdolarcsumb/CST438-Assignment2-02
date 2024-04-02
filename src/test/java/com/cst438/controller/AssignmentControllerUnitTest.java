@@ -3,6 +3,7 @@ package com.cst438.controller;
 import com.cst438.domain.*;
 import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.GradeDTO;
+import static org.mockito.ArgumentMatchers.anyInt;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,6 +40,12 @@ public class AssignmentControllerUnitTest {
 
     @MockBean
     private SectionRepository sectionRepository;
+
+    @MockBean
+    private GradeRepository gradeRepository;
+
+    @MockBean
+    private EnrollmentRepository enrollmentRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -101,6 +108,8 @@ public class AssignmentControllerUnitTest {
     public void gradeAssignment() throws Exception {
         int assignmentId = 1; // Assuming this is a valid assignment ID
         List<GradeDTO> gradesToUpdate = List.of(new GradeDTO(1, "Student Name", "student@example.com", "Assignment Title", "CST101", 101, 90));
+
+        given(gradeRepository.findByEnrollmentIdAndAssignmentId(anyInt(), anyInt())).willReturn(new Grade());
 
         // Mock GET request to fetch assignment grades
         mockMvc.perform(MockMvcRequestBuilders.get("/assignments/{assignmentId}/grades", assignmentId)
