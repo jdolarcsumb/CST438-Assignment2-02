@@ -6,8 +6,6 @@ import com.cst438.dto.GradeDTO;
 import static org.mockito.ArgumentMatchers.anyInt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
 import static org.mockito.ArgumentMatchers.any;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +16,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -96,19 +96,49 @@ public class AssignmentControllerUnitTest {
 
     @Test
     public void gradeInvalidAssignment() throws Exception {
-        int invalidAssignmentId = 999; // Assuming 999 is an ID that doesn't exist
-        given(assignmentRepository.findById(invalidAssignmentId)).willReturn(Optional.empty());
-        mockMvc.perform(MockMvcRequestBuilders.get("/assignments/{assignmentId}/grades", invalidAssignmentId)
+        int assignmentId = 999; // Assuming this is a valid assignment ID
+        Assignment mockAssignment = new Assignment();
+        // Set up your mockAssignment object with necessary data, including the Section
+        mockAssignment.setAssignmentId(assignmentId);
+        Section mockSection = new Section();
+        // Set other necessary fields on mockSection
+        mockAssignment.setSection(mockSection);
+
+        // Now mock the call to the repository
+        when(assignmentRepository.findById(eq(assignmentId))).thenReturn(Optional.of(mockAssignment));
+        List<GradeDTO> gradesToUpdate = List.of(new GradeDTO(1, "Student Name", "student@example.com", "Assignment Title", "CST101", 101, 90));
+
+        given(gradeRepository.findByEnrollmentIdAndAssignmentId(anyInt(), anyInt())).willReturn(new Grade());
+
+
+        // Mock GET request to fetch assignment grades
+        mockMvc.perform(MockMvcRequestBuilders.get("/assignments/{assignmentId}/grades", assignmentId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound()); // Assuming the controller returns 404 for non-existent resources
+                .andExpect(status().isOk());
+
+        // Mock PUT request to update grades
+        mockMvc.perform(MockMvcRequestBuilders.put("/grades")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(gradesToUpdate)))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void gradeAssignment() throws Exception {
         int assignmentId = 1; // Assuming this is a valid assignment ID
+        Assignment mockAssignment = new Assignment();
+        // Set up your mockAssignment object with necessary data, including the Section
+        mockAssignment.setAssignmentId(assignmentId);
+        Section mockSection = new Section();
+        // Set other necessary fields on mockSection
+        mockAssignment.setSection(mockSection);
+
+        // Now mock the call to the repository
+        when(assignmentRepository.findById(eq(assignmentId))).thenReturn(Optional.of(mockAssignment));
         List<GradeDTO> gradesToUpdate = List.of(new GradeDTO(1, "Student Name", "student@example.com", "Assignment Title", "CST101", 101, 90));
 
         given(gradeRepository.findByEnrollmentIdAndAssignmentId(anyInt(), anyInt())).willReturn(new Grade());
+
 
         // Mock GET request to fetch assignment grades
         mockMvc.perform(MockMvcRequestBuilders.get("/assignments/{assignmentId}/grades", assignmentId)
