@@ -18,7 +18,7 @@ public class SectionControllerSystemTest {
     //  for WinOS the file name will be chromedriver.exe
     //  for MacOS the file name will be chromedriver
     public static final String CHROME_DRIVER_FILE_LOCATION =
-            "C:/chromedriver_win32/chromedriver.exe";
+            "C:/chromedriver-win64/chromedriver.exe";
 
     //public static final String CHROME_DRIVER_FILE_LOCATION =
     //        "~/chromedriver_macOS/chromedriver";
@@ -47,7 +47,6 @@ public class SectionControllerSystemTest {
         driver = new ChromeDriver(ops);
 
         driver.get(URL);
-        // must have a short wait to allow time for the page to download
         Thread.sleep(SLEEP_DURATION);
 
     }
@@ -76,9 +75,9 @@ public class SectionControllerSystemTest {
         Thread.sleep(SLEEP_DURATION);
 
         // enter cst499, 2024, Spring and click search sections
-        driver.findElement(By.id("scourseId")).sendKeys("cst499");
-        driver.findElement(By.id("syear")).sendKeys("2024");
-        driver.findElement(By.id("ssemester")).sendKeys("Spring");
+        driver.findElement(By.id("courseId")).sendKeys("cst499");
+        driver.findElement(By.id("year")).sendKeys("2024");
+        driver.findElement(By.id("semester")).sendKeys("Spring");
         driver.findElement(By.id("search")).click();
         Thread.sleep(SLEEP_DURATION);
 
@@ -109,24 +108,14 @@ public class SectionControllerSystemTest {
         driver.findElement(By.id("addSection")).click();
         Thread.sleep(SLEEP_DURATION);
 
-        // enter data
-        //  courseId: cst499,
-        driver.findElement(By.id("ecourseId")).sendKeys("cst499");
-        //  secId: 1,
-        driver.findElement(By.id("esecId")).sendKeys("1");
-        //  year:2024,
-        driver.findElement(By.id("eyear")).sendKeys("2024");
-        //  semester:Spring,
-        driver.findElement(By.id("esemester")).sendKeys("Spring");
-        //  building:052,
-        driver.findElement(By.id("ebuilding")).sendKeys("052");
-        //  room:104,
-        driver.findElement(By.id("eroom")).sendKeys("104");
-        //  times:W F 1:00-2:50 pm,
-        driver.findElement(By.id("etimes")).sendKeys("W F 1:00-2:50 pm");
-        //  instructorEmail jgross@csumb.edu
-        driver.findElement(By.id("einstructorEmail")).sendKeys("jgross@csumb.edu");
-        // click Save
+        driver.findElement(By.id("courseId")).sendKeys("cst383");
+        driver.findElement(By.id("secId")).sendKeys("1");
+        driver.findElement(By.id("year")).sendKeys("2024");
+        driver.findElement(By.id("semester")).sendKeys("Spring");
+        driver.findElement(By.id("building")).sendKeys("052");
+        driver.findElement(By.id("room")).sendKeys("104");
+        driver.findElement(By.id("times")).sendKeys("W F 1:00-2:50 pm");
+        driver.findElement(By.id("instructorEmail")).sendKeys("jdolar@csumb.edu");
         driver.findElement(By.id("save")).click();
         Thread.sleep(SLEEP_DURATION);
 
@@ -172,9 +161,9 @@ public class SectionControllerSystemTest {
        Thread.sleep(SLEEP_DURATION);
 
        // enter cst, 2024, Spring and click search sections
-       driver.findElement(By.id("scourseId")).sendKeys("cst");
-       driver.findElement(By.id("syear")).sendKeys("2024");
-       driver.findElement(By.id("ssemester")).sendKeys("Spring");
+       driver.findElement(By.id("courseId")).sendKeys("cst");
+       driver.findElement(By.id("year")).sendKeys("2024");
+       driver.findElement(By.id("semester")).sendKeys("Spring");
        driver.findElement(By.id("search")).click();
        Thread.sleep(SLEEP_DURATION);
 
@@ -205,32 +194,25 @@ public class SectionControllerSystemTest {
        Thread.sleep(SLEEP_DURATION);
 
        // enter data
-       //  courseId: cst599
-       driver.findElement(By.id("ecourseId")).sendKeys("cst599");
-       //  secId: 1,
-       driver.findElement(By.id("esecId")).sendKeys("1");
-       //  year:2024,
-       driver.findElement(By.id("eyear")).sendKeys("2024");
-       //  semester:Spring,
-       driver.findElement(By.id("esemester")).sendKeys("Spring");
-       //  building:052,
-       driver.findElement(By.id("ebuilding")).sendKeys("052");
-       //  room:104,
-       driver.findElement(By.id("eroom")).sendKeys("104");
-       //  times:W F 1:00-2:50 pm,
-       driver.findElement(By.id("etimes")).sendKeys("W F 1:00-2:50 pm");
-       //  instructorEmail jgross@csumb.edu
-       driver.findElement(By.id("einstructorEmail")).sendKeys("jgross@csumb.edu");
+       //  courseId: cst383
+       driver.findElement(By.id("courseId")).sendKeys("cst383");
+       driver.findElement(By.id("secId")).sendKeys("1");
+       driver.findElement(By.id("year")).sendKeys("2024");
+       driver.findElement(By.id("semester")).sendKeys("Spring");
+       driver.findElement(By.id("building")).sendKeys("052");
+       driver.findElement(By.id("room")).sendKeys("104");
+       driver.findElement(By.id("times")).sendKeys("W F 1:00-2:50 pm");
+       driver.findElement(By.id("instructorEmail")).sendKeys("jdolar@csumb.edu");
        // click Save
        driver.findElement(By.id("save")).click();
        Thread.sleep(SLEEP_DURATION);
 
         WebElement msg = driver.findElement(By.id("addMessage"));
         String message = msg.getText();
-        assertEquals("course not found cst599", message);
+        assertEquals("course not found cst383", message);
 
         // clear the courseId field and enter cst499
-        WebElement courseId = driver.findElement(By.id("ecourseId"));
+        WebElement courseId = driver.findElement(By.id("courseId"));
         courseId.sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
        Thread.sleep(SLEEP_DURATION);
         courseId.sendKeys("cst499");

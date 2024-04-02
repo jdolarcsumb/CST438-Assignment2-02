@@ -34,9 +34,6 @@ public class SectionControllerUnitTest {
 
         MockHttpServletResponse response;
 
-        // create DTO with data for new section.
-        // the primary key, secNo, is set to 0. it will be
-        // set by the database when the section is inserted.
         SectionDTO section = new SectionDTO(
                 0,
                 2024,
@@ -46,13 +43,10 @@ public class SectionControllerUnitTest {
                 "052",
                 "104",
                 "W F 1:00-2:50 pm",
-                "Joshua Gross",
-                "jgross@csumb.edu"
+                "Jasper Dolar",
+                "jdolar@csumb.edu"
         );
 
-        // issue a http POST request to SpringTestServer
-        // specify MediaType for request and response data
-        // convert section to String data and set as request content
         response = mvc.perform(
                         MockMvcRequestBuilders
                                 .post("/sections")
@@ -102,13 +96,13 @@ public class SectionControllerUnitTest {
                 0,
                 2024,
                 "Spring",
-                "cst599",
+                "cst383",
                 1,
                 "052",
                 "104",
                 "W F 1:00-2:50 pm",
-                "Joshua Gross",
-                "jgross@csumb.edu"
+                "Jasper Dolar",
+                "jdolar@csumb.edu"
         );
 
         // issue the POST request
