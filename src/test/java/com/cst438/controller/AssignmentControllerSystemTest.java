@@ -32,25 +32,15 @@ public class AssignmentControllerSystemTest {
     public void testAddAndGradeAssignment() throws InterruptedException {
         navigateToAddAssignmentPage();
         addNewAssignment("Test Assignment", "2024-04-30");
-        navigateToGradeAssignmentPage();
-        gradeAssignment("Test Assignment", 90);
     }
 
     private void navigateToAddAssignmentPage() {
-        // Navigate to the page where assignments can be added
+        driver.findElement(By.id("section")).click();
     }
 
     private void addNewAssignment(String title, String dueDate) {
-        // Implement the logic to add a new assignment
+        driver.findElement(By.id("assignmentName")).sendKeys(title);
+        driver.findElement(By.id("dueDate")).sendKeys(dueDate);
+        driver.findElement(By.id("submit")).click();
     }
-
-    private void navigateToGradeAssignmentPage() {
-        // Navigate to the page where assignments can be graded
-    }
-
-    private void gradeAssignment(String assignmentName, int score) {
-        // Implement the logic to grade an assignment
-    }
-
-    // Additional helper methods or tests can be implemented here
 }
