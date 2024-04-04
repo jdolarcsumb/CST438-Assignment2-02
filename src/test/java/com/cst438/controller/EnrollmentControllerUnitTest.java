@@ -37,6 +37,8 @@ public class EnrollmentControllerUnitTest {
             999, 999, "024", "101", "T W 10:00-11:50", 3, 2024, "Spring"
     );
 
+    List<EnrollmentDTO>enrollments = new ArrayList<>();
+
     String enSecString = "/enrollments/sections/"+enrollmentDTO.sectionNo()+"?studentId="+enrollmentDTO.enrollmentId();
 
     @Autowired
@@ -44,7 +46,6 @@ public class EnrollmentControllerUnitTest {
 
     @Test
     public void enterFinalGrades() throws Exception {
-        List<EnrollmentDTO>enrollments = new ArrayList<>();
         enrollments.add(enrollmentDTO);
 
         http = mockMvc.perform(
