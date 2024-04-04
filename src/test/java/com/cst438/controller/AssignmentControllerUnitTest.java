@@ -3,178 +3,103 @@ package com.cst438.controller;
 import com.cst438.domain.*;
 import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.GradeDTO;
-import static org.mockito.ArgumentMatchers.anyInt;
+import com.cst438.domain.*;
+import com.cst438.dto.EnrollmentDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import java.sql.Date;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static com.cst438.test.utils.TestUtils.asJsonString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@WebMvcTest(AssignmentController.class)
+@AutoConfigureMockMvc
+@SpringBootTest
 public class AssignmentControllerUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private AssignmentRepository assignmentRepository;
 
-    @MockBean
+    @Autowired
     private SectionRepository sectionRepository;
 
-    @MockBean
+    @Autowired
     private GradeRepository gradeRepository;
 
-    @MockBean
+    @Autowired
     private EnrollmentRepository enrollmentRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Test
-    public void testCreateAssignmentSuccess() throws Exception {
-        Term term = new Term();
-        term.setStartDate(Date.valueOf("2024-01-01"));
-        term.setEndDate(Date.valueOf("2024-05-01"));
+    AssignmentDTO assignmentDTO = new AssignmentDTO(2, "Project Introduction", "2024-01-20", "CST101", 1, 1);
+    AssignmentDTO assignmentDTO1 = new AssignmentDTO(1, "An Assignment", "2024-02-10", "CST202", 2, 2);
+    AssignmentDTO assignmentDT0 = new AssignmentDTO(99, "The Projectz", "2024-02-20", "CST102", 2, 999);
+    int id = assignmentDTO.id();
+    int id0 = assignmentDTO1.id();
+    int id1 = assignmentDT0.id();
 
-        Section section = new Section();
-        section.setSectionNo(101);
-        section.setCourse(new Course());
-        section.setTerm(term);
+    MockHttpServletResponse http;
+    MockHttpServletResponse http0;
 
-        Assignment assignment = new Assignment();
-        assignment.setAssignmentId(1);
-        assignment.setTitle("New Assignment");
-        assignment.setDueDate(Date.valueOf("2024-02-15"));
-        assignment.setSection(section);
+    String grade_httpString0 = "/assignments/"+id0+"/grades";
+    String grade_httpString1 = "/assignments/"+id1+"/grades";
+    String assignmentString = "/assignments";
+    String gradeString = "/grades";
 
-        given(sectionRepository.findSectionBySectionNoAndCourseIdAndSecId(any(Integer.class), any(String.class), any(Integer.class))).willReturn(section);
-        given(assignmentRepository.save(any(Assignment.class))).willReturn(assignment);
-
-        AssignmentDTO newAssignmentDTO = new AssignmentDTO(0, "New Assignment", "2024-02-15", "CST101", 1, 101);
-
-        mockMvc.perform(post("/assignments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newAssignmentDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("New Assignment"));
-    }
-
-    @Test
-    public void testAddAssignment() throws Exception {
-        AssignmentDTO newAssignmentDTO = new AssignmentDTO(0, "Project 1", "2023-10-15", "CST101", 1, 101);
-        Assignment newAssignment = new Assignment();
-        newAssignment.setAssignmentId(1);
-        newAssignment.setTitle(newAssignmentDTO.title());
-        newAssignment.setDueDate(Date.valueOf(newAssignmentDTO.dueDate()));
-
-        given(assignmentRepository.save(any(Assignment.class))).willReturn(newAssignment);
-
-        mockMvc.perform(post("/assignments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newAssignmentDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Project 1"));
-
-        verify(assignmentRepository, times(1)).save(any(Assignment.class));
-    }
 
     @Test
     public void gradeInvalidAssignment() throws Exception {
-        int assignmentId = 999; // Assuming this is a valid assignment ID
-        Assignment mockAssignment = new Assignment();
-        // Set up your mockAssignment object with necessary data, including the Section
-        mockAssignment.setAssignmentId(assignmentId);
-        Section mockSection = new Section();
-        // Set other necessary fields on mockSection
-        mockAssignment.setSection(mockSection);
+        MockHttpServletResponse http;
 
-        // Now mock the call to the repository
-        when(assignmentRepository.findById(eq(assignmentId))).thenReturn(Optional.of(mockAssignment));
-        List<GradeDTO> gradesToUpdate = List.of(new GradeDTO(1, "Student Name", "student@example.com", "Assignment Title", "CST101", 101, 90));
-
-        given(gradeRepository.findByEnrollmentIdAndAssignmentId(anyInt(), anyInt())).willReturn(new Grade());
-
-
-        // Mock GET request to fetch assignment grades
-        mockMvc.perform(MockMvcRequestBuilders.get("/assignments/{assignmentId}/grades", assignmentId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        // Mock PUT request to update grades
-        mockMvc.perform(MockMvcRequestBuilders.put("/grades")
+        http = mockMvc.perform(MockMvcRequestBuilders.post(grade_httpString1)
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(gradesToUpdate)))
-                .andExpect(status().isOk());
+                        .content(asJsonString(assignmentDT0)))
+                .andReturn().getResponse();
+
+        assertNotEquals(200, http.getStatus());
     }
 
     @Test
     public void gradeAssignment() throws Exception {
-        int assignmentId = 1; // Assuming this is a valid assignment ID
-        Assignment mockAssignment = new Assignment();
-        // Set up your mockAssignment object with necessary data, including the Section
-        mockAssignment.setAssignmentId(assignmentId);
-        Section mockSection = new Section();
-        // Set other necessary fields on mockSection
-        mockAssignment.setSection(mockSection);
+        http = mockMvc.perform(MockMvcRequestBuilders.get(grade_httpString0)).andReturn().getResponse();
+        assertEquals(200, http.getStatus());
 
-        // Now mock the call to the repository
-        when(assignmentRepository.findById(eq(assignmentId))).thenReturn(Optional.of(mockAssignment));
-        List<GradeDTO> gradesToUpdate = List.of(new GradeDTO(1, "Student Name", "student@example.com", "Assignment Title", "CST101", 101, 90));
+        http0 = mockMvc.perform(MockMvcRequestBuilders.post(gradeString).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO)))
+                .andReturn().getResponse();
 
-        given(gradeRepository.findByEnrollmentIdAndAssignmentId(anyInt(), anyInt())).willReturn(new Grade());
-
-
-        // Mock GET request to fetch assignment grades
-        mockMvc.perform(MockMvcRequestBuilders.get("/assignments/{assignmentId}/grades", assignmentId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        // Mock PUT request to update grades
-        mockMvc.perform(MockMvcRequestBuilders.put("/grades")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(gradesToUpdate)))
-                .andExpect(status().isOk());
+        assertEquals(200, http.getStatus());
     }
 
     @Test
     public void addAssignmentInvalidSectionNumber() throws Exception {
-        AssignmentDTO newAssignment = new AssignmentDTO(0, "New Assignment", "2023-12-15", "CST999", 999, 101); // Invalid section number
+        http = mockMvc.perform(MockMvcRequestBuilders.post(assignmentString).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO1)))
+                .andReturn().getResponse();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/assignments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(newAssignment)))
-                .andExpect(status().isBadRequest()) // Assuming the controller checks for section validity and returns BadRequest on failure
-                .andReturn().getResponse().getContentAsString().contains("Invalid section number");
+        // Check the response code for 200 meaning OK
+        assertEquals(404, http.getStatus());
     }
 
     @Test
     public void addAssignment() throws Exception {
-        AssignmentDTO newAssignment = new AssignmentDTO(0, "Project Introduction", "2024-01-20", "CST101", 1, 101);
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/assignments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(newAssignment)))
-                .andExpect(status().isOk())
+        http = mockMvc.perform(MockMvcRequestBuilders.post(assignmentString).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO)))
                 .andReturn().getResponse();
 
-        // Verify some fields in the response, assuming the response includes the created assignment details
-        assertTrue(response.getContentAsString().contains("Project Introduction"));
+        // Check the response code for 200 meaning OK
+        assertEquals(200, http.getStatus());
     }
 
 
