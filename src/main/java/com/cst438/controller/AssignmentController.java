@@ -71,38 +71,24 @@ public class AssignmentController {
     // is between the start date and end date of the section term
     @PostMapping("/assignments")
     public AssignmentDTO createAssignment(
-        @RequestBody AssignmentDTO dto) {
-
-        Assignment assignment = new Assignment();
-        //Section section = sectionRepository.findById(dto.secId()).orElse(null);
-        // @Query("select s from Section s where s.sectionNo=:sectionNo and s.course.courseId=:courseId and s.secId=:secId")
-        Section section = sectionRepository.findSectionBySectionNoAndCourseIdAndSecId(dto.secNo(), dto.courseId(), dto.secId());
-        if (section == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "section not found "+dto.secId());
+            @RequestBody AssignmentDTO dto) {
+        Assignment a = new Assignment();
+        a.setTitle(dto.title());
+        a.setDueDate(Date.valueOf(dto.dueDate()));
+        Section s = sectionRepository.findById(dto.secNo()).orElse(null);
+        if (s==null) {
+            throw  new ResponseStatusException( HttpStatus.NOT_FOUND, "section not found");
         }
-        assignment.setAssignmentId(dto.id());
-        assignment.setSection(section);
-        assignment.setTitle(dto.title());
-        // check that due date of new or updated assignment
-        // is between the start date and end date of the section term
-        Date new_due_date = Date.valueOf(dto.dueDate());
-        Date start_of_term = section.getTerm().getStartDate();
-        Date end_of_term = section.getTerm().getEndDate();
-        if (new_due_date.before(start_of_term) || new_due_date.after(end_of_term)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New assignments due date is not within the terms date!");
-        }
+        a.setSection(s);
+        assignmentRepository.save(a);
 
-        // check that today is not after the dropDeadline for section
-        assignment.setDueDate(Date.valueOf(dto.dueDate()));
-        assignmentRepository.save(assignment);
         return new AssignmentDTO(
-            assignment.getAssignmentId(),
-            assignment.getTitle(),
-            assignment.getDueDate().toString(),
-            assignment.getSection().getCourse().getCourseId(),
-            assignment.getSection().getSecId(),
-            assignment.getSection().getSectionNo()
-        );
+                a.getAssignmentId(),
+                a.getTitle(),
+                a.getDueDate().toString(),
+                a.getSection().getCourse().getCourseId(),
+                a.getSection().getSecId(),
+                a.getSection().getSectionNo());
     }
 
     // update assignment for a section.  Only title and dueDate may be changed.
