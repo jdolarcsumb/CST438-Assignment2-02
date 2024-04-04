@@ -36,9 +36,11 @@ public class EnrollmentControllerUnitTest {
 
     List<EnrollmentDTO>enrollments = new ArrayList<>();
 
+    int secN0 = enrollmentDTO.sectionNo();
+    int studentId = enrollmentDTO.studentId();
     String enrollString = "/enrollments";
 
-    String enSecString = "/enrollments/sections/"+enrollmentDTO.sectionNo()+"?studentId="+enrollmentDTO.studentId();
+    String enSecString = "/enrollments/sections/"+secN0+"?studentId="+studentId;
 
     @Autowired
     private MockMvc mockMvc;

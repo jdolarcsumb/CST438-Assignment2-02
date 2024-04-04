@@ -40,10 +40,8 @@ public class AssignmentControllerUnitTest {
 
     @Test
     public void gradeInvalidAssignment() throws Exception {
-        http = mockMvc.perform(MockMvcRequestBuilders.post(grade_httpString1)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(assignmentDT0)))
+        http = mockMvc.perform(MockMvcRequestBuilders.post(grade_httpString1).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDT0)))
                 .andReturn().getResponse();
 
         assertNotEquals(200, http.getStatus());
@@ -73,10 +71,8 @@ public class AssignmentControllerUnitTest {
 
     @Test
     public void addAssignment() throws Exception {
-        List<AssignmentDTO> assignments = new ArrayList<>();
-        assignments.add(assignmentDTO);
         http = mockMvc.perform(MockMvcRequestBuilders.post(assignmentString).accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignments)))
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO)))
                 .andReturn().getResponse();
 
         // Check the response code for 200 meaning OK
