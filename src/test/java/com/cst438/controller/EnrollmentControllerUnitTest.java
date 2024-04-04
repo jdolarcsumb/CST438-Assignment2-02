@@ -46,7 +46,7 @@ public class EnrollmentControllerUnitTest {
     private MockMvc mockMvc;
 
     @Test
-    public void enterFinalGrades() throws Exception {
+    public void enterStudentGrade() throws Exception {
         enrollments.add(enrollmentDTO);
 
         http = mockMvc.perform(MockMvcRequestBuilders.put(enrollString).accept(MediaType.APPLICATION_JSON)
