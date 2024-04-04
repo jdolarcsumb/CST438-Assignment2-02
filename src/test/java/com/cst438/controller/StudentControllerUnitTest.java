@@ -36,10 +36,8 @@ public class StudentControllerUnitTest {
 
     @Test
     public void enrollStudent() throws Exception {
-        http = mockMvc.perform(MockMvcRequestBuilders.post(esString)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(enrollmentDTO)))
+        http = mockMvc.perform(MockMvcRequestBuilders.post(esString).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
                 .andReturn().getResponse();
 
         assertEquals(200, http.getStatus());
@@ -47,18 +45,14 @@ public class StudentControllerUnitTest {
 
     @Test
     public void enrollStudentAlreadyEnrolled() throws Exception {
-        http = mockMvc.perform(MockMvcRequestBuilders.post(esString)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(enrollmentDTO)))
+        http = mockMvc.perform(MockMvcRequestBuilders.post(esString).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
                 .andReturn().getResponse();
 
         assertEquals(200, http.getStatus());
 
-        http = mockMvc.perform(MockMvcRequestBuilders.post(esString)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(enrollmentDTO)))
+        http = mockMvc.perform(MockMvcRequestBuilders.post(esString).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
                 .andReturn().getResponse();
 
         assertNotEquals(200, http.getStatus());
