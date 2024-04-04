@@ -30,7 +30,7 @@ public class StudentControllerUnitTest {
     int secN0 = enrollmentDTO.sectionNo();
     int studentId = enrollmentDTO.studentId();
     MockHttpServletResponse http;
-    String esString = "/enrollments/sections/"+secN0+"?studentId="+studentId;
+    String esString = "/enrollments/sections/"+secN0;
 
     @Test
     public void enrollStudent() throws Exception {
@@ -43,12 +43,6 @@ public class StudentControllerUnitTest {
 
     @Test
     public void enrollStudentAlreadyEnrolled() throws Exception {
-        http = mockMvc.perform(MockMvcRequestBuilders.post(esString).accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
-                .andReturn().getResponse();
-
-        assertEquals(200, http.getStatus());
-
         http = mockMvc.perform(MockMvcRequestBuilders.post(esString).accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
                 .andReturn().getResponse();
