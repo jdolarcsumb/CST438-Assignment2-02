@@ -47,11 +47,6 @@ public class EnrollmentControllerUnitTest {
         List<EnrollmentDTO>enrollments = new ArrayList<>();
         enrollments.add(enrollmentDTO);
 
-
-
-        // issue a http POST request to SpringTestServer
-        // specify MediaType for request and response data
-        // convert section to String data and set as request content
         http = mockMvc.perform(
                         MockMvcRequestBuilders
                                 .put("/enrollments")
