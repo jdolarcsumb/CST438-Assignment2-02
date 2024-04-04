@@ -22,24 +22,23 @@ public class EnrollmentControllerUnitTest {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
-    @Autowired
-    private EnrollmentController enrollmentController;
-
     MockHttpServletResponse http;
 
     EnrollmentDTO enrollmentDTO = new EnrollmentDTO(
             1, "A", 5, "John Smith", "jsmith@csumb.edu", "cst499",
-            6, 6, "024", "101", "T W 10:00-11:50", 3, 2024, "Spring"
+            6, 6, "024", "101", "T W 10:00-11:50", 3, 2023, "Spring"
     );
 
     EnrollmentDTO enrollmentDT0 = new EnrollmentDTO(
             1, "B", 5, "John Smith", "jsmith@csumb.edu", "cst499",
-            999, 999, "024", "101", "T W 10:00-11:50", 3, 2024, "Spring"
+            999, 999, "024", "101", "T W 10:00-11:50", 3, 2023, "Spring"
     );
 
     List<EnrollmentDTO>enrollments = new ArrayList<>();
 
-    String enSecString = "/enrollments/sections/"+enrollmentDTO.sectionNo()+"?studentId="+enrollmentDTO.enrollmentId();
+    String enrollString = "/enrollments";
+
+    String enSecString = "/enrollments/sections/"+enrollmentDTO.sectionNo()+"?studentId="+enrollmentDTO.studentId();
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,7 +47,7 @@ public class EnrollmentControllerUnitTest {
     public void enterFinalGrades() throws Exception {
         enrollments.add(enrollmentDTO);
 
-        http = mockMvc.perform(MockMvcRequestBuilders.put("/enrollments").accept(MediaType.APPLICATION_JSON)
+        http = mockMvc.perform(MockMvcRequestBuilders.put(enrollString).accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollments)))
                 .andReturn().getResponse();
 
@@ -57,8 +56,8 @@ public class EnrollmentControllerUnitTest {
     }
 
     @Test
-    public void enrollmentBadSectionNumber() throws Exception {
-        http = mockMvc.perform(MockMvcRequestBuilders.post(enSecString).accept(MediaType.APPLICATION_JSON)
+    public void enrollBadSectionNumber() throws Exception {
+        http = mockMvc.perform(MockMvcRequestBuilders.post(enrollString).accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDT0)))
                 .andReturn().getResponse();
 
@@ -67,7 +66,7 @@ public class EnrollmentControllerUnitTest {
     }
 
     @Test
-    public void testEnrollIntoSection() throws Exception {
+    public void enrollIntoSection() throws Exception {
         http = mockMvc.perform(MockMvcRequestBuilders.post(enSecString).accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
                 .andReturn().getResponse();

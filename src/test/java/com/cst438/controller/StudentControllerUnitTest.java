@@ -26,8 +26,6 @@ public class StudentControllerUnitTest {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
-//    private ObjectMapper objectMapper = new ObjectMapper();
-
     EnrollmentDTO enrollmentDTO = new EnrollmentDTO(0, "A", 3, "John Doe", "jdoe@example.com", "cst101", 1, 8, "Library", "101", "T Th 9:00-10:15", 3, 2023, "Fall");
     int secN0 = enrollmentDTO.sectionNo();
     int studentId = enrollmentDTO.studentId();
