@@ -49,13 +49,9 @@ public class EnrollmentControllerUnitTest {
         enrollments.add(enrollmentDTO);
 
         http = mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .put("/enrollments")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(asJsonString(enrollments)))
-                .andReturn()
-                .getResponse();
+                        MockMvcRequestBuilders.put("/enrollments").accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollments)))
+                .andReturn().getResponse();
 
         // check the response code for 200 meaning OK
         assertEquals(200, http.getStatus());
