@@ -1,11 +1,6 @@
 package com.cst438.controller;
 
-import com.cst438.domain.*;
-import com.cst438.dto.AssignmentDTO;
-import com.cst438.dto.GradeDTO;
-import com.cst438.domain.*;
-import com.cst438.dto.EnrollmentDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.cst438.dto.AssignmentDTO;;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,11 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import java.util.ArrayList;
+import java.util.List;
 import static com.cst438.test.utils.TestUtils.asJsonString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -26,20 +21,6 @@ public class AssignmentControllerUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private AssignmentRepository assignmentRepository;
-
-    @Autowired
-    private SectionRepository sectionRepository;
-
-    @Autowired
-    private GradeRepository gradeRepository;
-
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     AssignmentDTO assignmentDTO = new AssignmentDTO(2, "Project Introduction", "2024-01-20", "CST101", 1, 1);
     AssignmentDTO assignmentDTO1 = new AssignmentDTO(1, "An Assignment", "2024-02-10", "CST202", 2, 2);
@@ -59,8 +40,6 @@ public class AssignmentControllerUnitTest {
 
     @Test
     public void gradeInvalidAssignment() throws Exception {
-        MockHttpServletResponse http;
-
         http = mockMvc.perform(MockMvcRequestBuilders.post(grade_httpString1)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -94,8 +73,10 @@ public class AssignmentControllerUnitTest {
 
     @Test
     public void addAssignment() throws Exception {
+        List<AssignmentDTO> assignments = new ArrayList<>();
+        assignments.add(assignmentDTO);
         http = mockMvc.perform(MockMvcRequestBuilders.post(assignmentString).accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO)))
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignments)))
                 .andReturn().getResponse();
 
         // Check the response code for 200 meaning OK
