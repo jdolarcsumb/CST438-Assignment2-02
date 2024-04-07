@@ -63,4 +63,69 @@ public class RegistrarServiceProxy {
             throw new RuntimeException(e);
         }
     }
+
+    // Add functions for Gradebook service here
+    // Example:
+    public void listSectionsForInstructor(int instructorId) {
+        // Implement functionality to list sections for instructor
+    }
+
+    public void viewEnrollmentsForSection(int sectionId) {
+        // Implement functionality to view enrollments for section
+    }
+
+    public void enterFinalGradesForEnrollment(int enrollmentId, String finalGrade) {
+        // Implement functionality to enter final grades for enrollment
+    }
+
+    public void createAssignment(int courseId, String title, String dueDate) {
+        // Implement functionality to create assignment
+    }
+
+    public void modifyAssignment(int assignmentId, String newTitle, String newDueDate) {
+        // Implement functionality to modify assignment
+    }
+
+    public void gradeAssignment(int assignmentId, int studentId, int score) {
+        // Implement functionality to grade assignment
+    }
+
+    // Add more functions as needed for Gradebook service
+
+    public void modifySection(int sectionId, String newBuilding, String newRoom, String newTimes) {
+        // Implement functionality to modify section details
+    }
+
+    public void createCourse(String courseId, String title, String department, String instructorEmail) {
+        // Implement functionality to create a new course
+    }
+
+    public void modifyCourse(String courseId, String newTitle, String newDepartment, String newInstructorEmail) {
+        // Implement functionality to modify course details
+    }
+
+    public void deleteCourse(String courseId) {
+        // Implement functionality to delete a course
+    }
+
+    public void createUser(String name, String email, String type) {
+        // Implement functionality to create a new user
+    }
+
+    public void modifyUser(int userId, String newName, String newEmail, String newType) {
+        // Implement functionality to modify user details
+    }
+
+    public void deleteUser(int userId) {
+        // Implement functionality to delete a user
+    }
+
+    public void createEnrollment(int studentId, int sectionId) {
+        // Implement functionality to create a new enrollment
+    }
+
+    public void deleteEnrollment(int enrollmentId) {
+        // Implement functionality to delete an enrollment
+    }
+
 }
