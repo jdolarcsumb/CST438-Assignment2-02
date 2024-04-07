@@ -2,6 +2,7 @@ package com.cst438.controller;
 
 import com.cst438.domain.*;
 import com.cst438.dto.*;
+import com.cst438.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class AssignmentController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RegistrarServiceProxy registrarServiceProxy;
 
     // instructor lists assignments for a section.  Assignments ordered by due date.
     // logged in user must be the instructor for the section
@@ -74,13 +78,16 @@ public class AssignmentController {
         a.setSection(s);
         assignmentRepository.save(a);
 
-        return new AssignmentDTO(
+        AssignmentDTO aDTO = new AssignmentDTO(
                 a.getAssignmentId(),
                 a.getTitle(),
                 a.getDueDateAsString(),
                 a.getSection().getCourse().getCourseId(),
                 a.getSection().getSecId(),
                 a.getSection().getSectionNo());
+
+        registrarServiceProxy.createAssignment(aDTO);
+        return aDTO;
     }
 
     // update assignment for a section.  Only title and dueDate may be changed.
@@ -96,13 +103,15 @@ public class AssignmentController {
         a.setDueDate(dto.dueDate());
         assignmentRepository.save(a);
 
-        return new AssignmentDTO(
+        AssignmentDTO aDTO = new AssignmentDTO(
                 a.getAssignmentId(),
                 a.getTitle(),
                 a.getDueDateAsString(),
                 a.getSection().getCourse().getCourseId(),
                 a.getSection().getSecId(),
                 a.getSection().getSectionNo());
+        registrarServiceProxy.updateAssignment(aDTO);
+        return aDTO;
     }
 
     // delete assignment for a section
@@ -112,6 +121,7 @@ public class AssignmentController {
         Assignment a = assignmentRepository.findById(assignmentId).orElse(null);
         if (a != null) {
             assignmentRepository.delete(a);
+            registrarServiceProxy.deleteAssignment(assignmentId);
         }
     }
 
@@ -144,6 +154,7 @@ public class AssignmentController {
                     a.getSection().getSecId(),
                     g.getScore()));
         }
+        registrarServiceProxy.getAssignmentGrades(assignmentId);
         return dlist;
     }
 
@@ -160,6 +171,7 @@ public class AssignmentController {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "grade not found "+ g.gradeId());
             }
         }
+        registrarServiceProxy.updateGrades(dlist);
     }
 
 

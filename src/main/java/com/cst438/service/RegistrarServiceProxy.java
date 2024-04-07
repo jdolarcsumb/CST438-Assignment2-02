@@ -252,7 +252,11 @@ public class RegistrarServiceProxy {
     }
 
     public void updateGrades(List<GradeDTO> dlist) {
-        sendMessage("updateGrades " +  dlist);
+        sendMessage("updateGrades " +  asJsonString(dlist));
+    }
+
+    public void getAssignmentGrades(int assignmentId) {
+        sendMessage("updateGrades " +  assignmentId);
     }
 
     // Add more functions as needed for Gradebook service
