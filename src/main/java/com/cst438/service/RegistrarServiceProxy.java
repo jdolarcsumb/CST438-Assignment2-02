@@ -78,7 +78,7 @@ public class RegistrarServiceProxy {
         // Implement functionality to enter final grades for enrollment
     }
 
-    public void createAssignment(int courseId, String title, String dueDate) {
+    public void createAssignment(AssignmentDTO assignment) {
         // Implement functionality to create assignment
     }
 
