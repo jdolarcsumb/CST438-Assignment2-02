@@ -79,7 +79,7 @@ public class RegistrarServiceProxy {
     }
 
     public void createAssignment(AssignmentDTO assignment) {
-        // Implement functionality to create assignment
+        sendMessage("createAssignment " +  fromJsonString(assignment));
     }
 
     public void modifyAssignment(int assignmentId, String newTitle, String newDueDate) {
