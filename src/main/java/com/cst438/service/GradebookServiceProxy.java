@@ -10,23 +10,65 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GradebookServiceProxy {
-
+    /*
+     * create or use existing message queue
+     */
     Queue gradebookServiceQueue = new Queue("gradebook_service", true);
 
     @Bean
-    public Queue createQueue() {
-        return new Queue("registrar_service", true);
-    }
+    public Queue createQueue() { return new Queue("registrar_service", true); }
 
     @Autowired
     RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    EnrollmentRepository enrollmentRepository;
+
+    public void addCourse(CourseDTO course) {
+        sendMessage( "addCourse " +asJsonString(course) );
+    }
+
+    public void updateCourse(CourseDTO course) {
+        sendMessage("updateCourse " +asJsonString(course) );
+    }
+
+    public void deleteCourse(String courseId) {sendMessage("deleteCourse " +courseId);}
+    public void addSection(SectionDTO s) {sendMessage("addSection" +asJsonString(s));}
+    public void updateSection(SectionDTO s) {sendMessage("updateSection " +asJsonString(s));}
+    public void deleteSection(int sectionNo) {sendMessage("deleteSection " +sectionNo);}
+    public void addUser(UserDTO user) {sendMessage("addUser" + asJsonString(user));}
+    public void updateUser (UserDTO user) { sendMessage("updateUser " +asJsonString(user));}
+    public void deleteUser (int userId) { sendMessage( "deleteUser " +userId);}
+    public void enrollInCourse(EnrollmentDTO e) { sendMessage("addEnrollment " +asJsonString(e));}
+    public void dropCourse(int enrollmentId) {
+        sendMessage("deleteEnrollment " +enrollmentId);
+    }
+
     @RabbitListener(queues = "registrar_service")
     public void receiveFromGradebook(String message)  {
         //TODO implement this message
+        // receive message from Gradebook service
+
+        try {
+            System.out.println("receive from Gradebook " + message);
+            String[] parts = message.split(" ", 2);
+            if (parts[0].equals("updateEnrollment")){
+                EnrollmentDTO dto = fromJsonString(parts[1], EnrollmentDTO.class);
+                Enrollment e = enrollmentRepository.findById(dto.enrollmentId()).orElse(null);
+                if (e == null) {
+                    System.out.println("Error receive from GradeBook Enrollment not found " + dto.enrollmentId());
+                } else {
+                    e.setGrade(dto.grade());
+                    enrollmentRepository.save(e);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Exception in receivedFromGradebook " + e.getMessage());
+        }
     }
 
     private void sendMessage(String s) {
+        System.out.println("Registrar to Gradebook " +s);
         rabbitTemplate.convertAndSend(gradebookServiceQueue.getName(), s);
     }
     private static String asJsonString(final Object obj) {
