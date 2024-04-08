@@ -40,7 +40,7 @@ public class RegistrarServiceProxy {
         //TODO implement this message
         try {
             System.out.println("receive from Registrar " + message);
-            String[] parts = message.split(" ", 2);
+            String[] parts = message.split(" ", 3);
             String call = parts[0];
             if (call.equals("updateEnrollment")) {
                 EnrollmentDTO dto = fromJsonString(parts[1], EnrollmentDTO.class);
@@ -227,8 +227,8 @@ public class RegistrarServiceProxy {
 
     // Add functions for Gradebook service here
     // Example:
-    public void listSectionsForInstructor(int instructorId) {
-        // Implement functionality to list sections for instructor
+    public void getSectionsForInstructor(String instructorEmail, int year, String semester) {
+        sendMessage("getSectionsForInstructor " +  asJsonString(instructorEmail) + " " + asJsonString(year) + " " + asJsonString(semester));
     }
 
     public void viewEnrollmentsForSection(int sectionId) {
@@ -261,12 +261,12 @@ public class RegistrarServiceProxy {
 
     // Add more functions as needed for Gradebook service
 
-    public void modifySection(int sectionId, String newBuilding, String newRoom, String newTimes) {
-        // Implement functionality to modify section details
+    public void getStudentAssignments(int studentId, int year, String semester) {
+//        sendMessage("getSectionsForInstructor " +  asJsonString(studentId, year, semester));
     }
 
-    public void createCourse(String courseId, String title, String department, String instructorEmail) {
-        // Implement functionality to create a new course
+    public void getAssignments(int secNo) {
+        sendMessage("getAssignments " +  secNo);
     }
 
     public void modifyCourse(String courseId, String newTitle, String newDepartment, String newInstructorEmail) {
