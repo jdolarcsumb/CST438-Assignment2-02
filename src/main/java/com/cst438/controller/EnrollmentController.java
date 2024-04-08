@@ -55,6 +55,7 @@ public class EnrollmentController {
                     e.getSection().getTerm().getYear(),
                     e.getSection().getTerm().getSemester()));
         }
+        registrarServiceProxy.getEnrollments(sectionNo);
         return dlist;
     }
 

@@ -228,11 +228,11 @@ public class RegistrarServiceProxy {
     // Add functions for Gradebook service here
     // Example:
     public void getSectionsForInstructor(String instructorEmail, int year, String semester) {
-        sendMessage("getSectionsForInstructor " +  asJsonString(instructorEmail) + " " + asJsonString(year) + " " + asJsonString(semester));
+        sendMessage("getSectionsForInstructor " +  asJsonString(instructorEmail) + " " + year + " " + asJsonString(semester));
     }
 
-    public void viewEnrollmentsForSection(int sectionId) {
-        // Implement functionality to view enrollments for section
+    public void getEnrollments(int sectionNo) {
+        sendMessage("getSectionsForInstructor " +  sectionNo);
     }
 
     public void enterFinalGradesForEnrollment(List<EnrollmentDTO> dlist) {
@@ -259,42 +259,13 @@ public class RegistrarServiceProxy {
         sendMessage("updateGrades " +  assignmentId);
     }
 
-    // Add more functions as needed for Gradebook service
-
     public void getStudentAssignments(int studentId, int year, String semester) {
-//        sendMessage("getSectionsForInstructor " +  asJsonString(studentId, year, semester));
+        sendMessage("getSectionsForInstructor " +  studentId + " " + year + " " + asJsonString(semester));
     }
 
     public void getAssignments(int secNo) {
         sendMessage("getAssignments " +  secNo);
     }
 
-    public void modifyCourse(String courseId, String newTitle, String newDepartment, String newInstructorEmail) {
-        // Implement functionality to modify course details
-    }
-
-    public void deleteCourse(String courseId) {
-        // Implement functionality to delete a course
-    }
-
-    public void createUser(String name, String email, String type) {
-        // Implement functionality to create a new user
-    }
-
-    public void modifyUser(int userId, String newName, String newEmail, String newType) {
-        // Implement functionality to modify user details
-    }
-
-    public void deleteUser(int userId) {
-        // Implement functionality to delete a user
-    }
-
-    public void createEnrollment(int studentId, int sectionId) {
-        // Implement functionality to create a new enrollment
-    }
-
-    public void deleteEnrollment(int enrollmentId) {
-        // Implement functionality to delete an enrollment
-    }
 
 }
