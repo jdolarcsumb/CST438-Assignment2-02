@@ -70,7 +70,7 @@ public class RegistrarServiceProxy {
                     c.setCredits(dto.credits());
                     courseRepository.save(c);
                 }
-            } else if (call.equals("addCourseForStudent")) {
+            } else if (call.equals("enrollCourse")) {
                 int studentId = Integer.valueOf(parts[1]);
                 int sectionNo = Integer.valueOf(parts[2]);
                 Enrollment e = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(studentId, sectionNo);
