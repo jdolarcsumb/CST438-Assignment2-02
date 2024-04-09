@@ -42,16 +42,16 @@ public class RegistrarServiceProxy {
             System.out.println("receive from Registrar " + message);
             String[] parts = message.split(" ", 3);
             String call = parts[0];
-            if (call.equals("addCourse")) {
+            if (call.equals("addCourse")) {            //addCourse
                 CourseDTO course = fromJsonString(parts[1], CourseDTO.class);
                 Course c = new Course();
                 c.setCredits(course.credits());
                 c.setTitle(course.title());
                 c.setCourseId(course.courseId());
                 courseRepository.save(c);
-            } else if (call.equals("deleteCourse")) {
+            } else if (call.equals("deleteCourse")) {   //deleteCourse
                 courseRepository.deleteById(parts[1]);
-            } else if (call.equals("updateCourse")) {
+            } else if (call.equals("updateCourse")) {   //updateCourse
                 CourseDTO dto = fromJsonString(parts[1], CourseDTO.class);
                 Course c = courseRepository.findById(dto.courseId()).orElse(null);
                 if (c == null) {
@@ -61,7 +61,7 @@ public class RegistrarServiceProxy {
                     c.setCredits(dto.credits());
                     courseRepository.save(c);
                 }
-            } else if (call.equals("enrollCourse")) {
+            } else if (call.equals("enrollCourse")) {      //enrollCourse
                 int studentId = Integer.valueOf(parts[1]);
                 int sectionNo = Integer.valueOf(parts[2]);
                 Enrollment e = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(studentId, sectionNo);
@@ -84,7 +84,7 @@ public class RegistrarServiceProxy {
                 }
                 e.setSection(section);
                 enrollmentRepository.save(e);
-            } else if (call.equals("dropCourse")) {
+            } else if (call.equals("dropCourse")) {        //dropCourse
                 Enrollment e = enrollmentRepository.findById(Integer.valueOf(parts[1])).orElse(null);
                 if (e==null) {
                     System.out.println("Error receiveFromRegistrar: enrollment not found");
@@ -94,7 +94,7 @@ public class RegistrarServiceProxy {
                     System.out.println("Error receiveFromRegistrar: enrollment can not be deleted due to the drop deadline date");
                 }
                 enrollmentRepository.delete(e);
-            } else if (call.equals("createUser")) {
+            } else if (call.equals("createUser")) {         //createUser
                 UserDTO userDTO = fromJsonString(parts[1], UserDTO.class);
                 BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
                 User user = new User();
@@ -114,7 +114,7 @@ public class RegistrarServiceProxy {
                     System.out.println("Error receiveFromRegistrar: invalid user type");
                 }
                 userRepository.save(user);
-            } else if (call.equals("updateUser")) {
+            } else if (call.equals("updateUser")) {             //updateUser
                 UserDTO userDTO = fromJsonString(parts[1], UserDTO.class);
                 User user = userRepository.findById(userDTO.id()).orElse(null);
                 if (user==null) {
@@ -130,9 +130,9 @@ public class RegistrarServiceProxy {
                     System.out.println("Error receiveFromRegistrar: invalid user type");
                 }
                 userRepository.save(user);
-            } else if (call.equals("deleteUser")) {
+            } else if (call.equals("deleteUser")) {                 //deleteUser
                 userRepository.deleteById(Integer.valueOf(parts[1]));
-            } else if (call.equals("addSection")) {
+            } else if (call.equals("addSection")) {                 //addSection
                 SectionDTO section = fromJsonString(parts[1], SectionDTO.class);
                 Course course = courseRepository.findById(section.courseId()).orElse(null);
                 if (course == null ){
@@ -165,7 +165,7 @@ public class RegistrarServiceProxy {
 
                 sectionRepository.save(s);
 
-            } else if (call.equals("updateSection")) {
+            } else if (call.equals("updateSection")) {              //updateSection
                 SectionDTO section = fromJsonString(parts[1], SectionDTO.class);
                 Section s = sectionRepository.findById(section.secNo()).orElse(null);
                 if (s==null) {
@@ -187,7 +187,7 @@ public class RegistrarServiceProxy {
                     s.setInstructor_email(section.instructorEmail());
                 }
                 sectionRepository.save(s);
-            } else if (call.equals("deleteSection")) {
+            } else if (call.equals("deleteSection")) {              //deleteSection
                 sectionRepository.deleteById(Integer.valueOf(parts[1]));
             } else {
                 System.out.println("Error receiveFromRegistrar: Action not recognized");
