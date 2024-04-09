@@ -42,16 +42,7 @@ public class RegistrarServiceProxy {
             System.out.println("receive from Registrar " + message);
             String[] parts = message.split(" ", 3);
             String call = parts[0];
-            if (call.equals("updateEnrollment")) {
-                EnrollmentDTO dto = fromJsonString(parts[1], EnrollmentDTO.class);
-                Enrollment e = enrollmentRepository.findById(dto.enrollmentId()).orElse(null);
-                if (e == null) {
-                    System.out.println("Error receiveFromRegistrar Enrollment not found " + dto.enrollmentId());
-                } else {
-                    e.setGrade(dto.grade());
-                    enrollmentRepository.save(e);
-                }
-            } else if (call.equals("addCourse")) {
+            if (call.equals("addCourse")) {
                 CourseDTO course = fromJsonString(parts[1], CourseDTO.class);
                 Course c = new Course();
                 c.setCredits(course.credits());
