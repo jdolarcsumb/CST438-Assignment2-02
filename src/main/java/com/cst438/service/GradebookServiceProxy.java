@@ -27,6 +27,9 @@ public class GradebookServiceProxy {
     @Autowired
     EnrollmentRepository enrollmentRepository;
 
+    @Autowired
+    SectionRepository sectionRepository;
+
     public void addCourse(CourseDTO course) {
         sendMessage( "addCourse " +asJsonString(course) );
     }
@@ -35,14 +38,14 @@ public class GradebookServiceProxy {
         sendMessage("updateCourse " +asJsonString(course) );
     }
 
-    public void deleteCourse(String courseId) {sendMessage("deleteCourse " +courseId);}
+    public void deleteCourse(String courseId) {sendMessage("dropCourse " +courseId);}
     public void addSection(SectionDTO s) {sendMessage("addSection" +asJsonString(s));}
     public void updateSection(SectionDTO s) {sendMessage("updateSection " +asJsonString(s));}
     public void deleteSection(int sectionNo) {sendMessage("deleteSection " +sectionNo);}
-    public void addUser(UserDTO user) {sendMessage("addUser" + asJsonString(user));}
+    public void addUser(UserDTO user) {sendMessage("createUser" + asJsonString(user));}
     public void updateUser (UserDTO user) { sendMessage("updateUser " +asJsonString(user));}
     public void deleteUser (int userId) { sendMessage( "deleteUser " +userId);}
-    public void enrollInCourse(EnrollmentDTO e) { sendMessage("addEnrollment " +asJsonString(e));}
+    public void enrollCourse(EnrollmentDTO e) { sendMessage("enrollCourse " +asJsonString(e));}
     public void dropCourse(int enrollmentId) {
         sendMessage("deleteEnrollment " +enrollmentId);
     }
@@ -64,6 +67,19 @@ public class GradebookServiceProxy {
                     e.setGrade(dto.grade());
                     enrollmentRepository.save(e);
                 }
+            }
+            else if (parts[0].equals("enterFinalGradesForEnrollment")) {
+                EnrollmentDTO dto = fromJsonString(parts[1], EnrollmentDTO.class);
+                Enrollment e = enrollmentRepository.findById(dto.enrollmentId()).orElse(null);
+                if (e == null) {
+                    System.out.println("Error receive from GradeBook Enrollment not found " + dto.enrollmentId());
+                } else {
+                    e.setGrade(dto.grade());
+                    enrollmentRepository.save(e);
+                }
+            }
+            else if (parts[0].equals("getSectionsForInstructor")) {
+
             }
         } catch (Exception e) {
             System.out.println("Exception in receivedFromGradebook " + e.getMessage());
