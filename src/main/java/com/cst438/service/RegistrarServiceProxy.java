@@ -189,6 +189,20 @@ public class RegistrarServiceProxy {
                 sectionRepository.save(s);
             } else if (call.equals("deleteSection")) {              //deleteSection
                 sectionRepository.deleteById(Integer.valueOf(parts[1]));
+            } else if (call.equals("getAllCourses")) {
+
+            } else if (call.equals("getAllTerms")) {
+
+            } else if (call.equals("getSections")) {
+
+            } else if (call.equals("getOpenSectionsForEnrollment")) {
+
+            } else if (call.equals("getTranscript")) {
+
+            } else if (call.equals("getSchedule")) {
+
+            } else if (call.equals("findAllUsers")) {
+
             } else {
                 System.out.println("Error receiveFromRegistrar: Action not recognized");
             }
