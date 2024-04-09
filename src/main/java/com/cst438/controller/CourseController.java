@@ -2,14 +2,12 @@ package com.cst438.controller;
 
 import com.cst438.domain.*;
 import com.cst438.dto.CourseDTO;
-import com.cst438.dto.SectionDTO;
 import com.cst438.service.GradebookServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,13 +45,8 @@ public class CourseController {
         c.setTitle(course.title());
         c.setCourseId(course.courseId());
         courseRepository.save(c);
-        CourseDTO courseDTO = new CourseDTO(
-                c.getCourseId(),
-                c.getTitle(),
-                c.getCredits()
-        );
-        gradebookService.addCourse(courseDTO);
-        return courseDTO;
+        gradebookService.addCourse(course);
+        return course;
     }
 
     // ADMIN function to update a course
