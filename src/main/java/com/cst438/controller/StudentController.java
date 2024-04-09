@@ -2,6 +2,7 @@ package com.cst438.controller;
 
 import com.cst438.domain.*;
 import com.cst438.dto.EnrollmentDTO;
+import com.cst438.service.GradebookServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ public class StudentController {
 
   @Autowired
   SectionRepository sectionRepository;
+
+  @Autowired
+  GradebookServiceProxy gradebookServiceProxy;
 
   // student gets transcript
   // list course_id, sec_id, title, credit, grade in chronological order
@@ -122,21 +126,23 @@ public class StudentController {
     }
     e.setSection(section);
     enrollmentRepository.save(e);
-    return new EnrollmentDTO(
-            e.getEnrollmentId(),
-            e.getGrade(),
-            student.getId(),
-            student.getName(),
-            student.getEmail(),
-            e.getSection().getCourse().getCourseId(),
-            e.getSection().getSecId(),
-            e.getSection().getSectionNo(),
-            e.getSection().getBuilding(),
-            e.getSection().getRoom(),
-            e.getSection().getTimes(),
-            e.getSection().getCourse().getCredits(),
-            e.getSection().getTerm().getYear(),
-            e.getSection().getTerm().getSemester());
+
+    EnrollmentDTO enrollmentDTO = new EnrollmentDTO( e.getEnrollmentId(),
+      e.getGrade(),
+      student.getId(),
+      student.getName(),
+      student.getEmail(),
+      e.getSection().getCourse().getCourseId(),
+      e.getSection().getSecId(),
+      e.getSection().getSectionNo(),
+      e.getSection().getBuilding(),
+      e.getSection().getRoom(),
+      e.getSection().getTimes(),
+      e.getSection().getCourse().getCredits(),
+      e.getSection().getTerm().getYear(),
+      e.getSection().getTerm().getSemester());
+    gradebookServiceProxy.enrollCourse(enrollmentDTO);
+    return enrollmentDTO;
   }
 
   // student drops a course
@@ -153,5 +159,6 @@ public class StudentController {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "enrollment can not be deleted due to the drop deadline date");
     }
     enrollmentRepository.delete(e);
+    gradebookServiceProxy.dropCourse(enrollmentId);
   }
 }

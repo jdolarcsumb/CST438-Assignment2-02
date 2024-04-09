@@ -3,6 +3,7 @@ package com.cst438.controller;
 import com.cst438.domain.User;
 import com.cst438.domain.UserRepository;
 import com.cst438.dto.UserDTO;
+import com.cst438.service.GradebookServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,9 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
-
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    @Autowired
+    GradebookServiceProxy gradebookServiceProxy;
 
     @GetMapping("/users")
     public List<UserDTO> findAllUsers() {
@@ -57,7 +59,9 @@ public class UserController {
             throw  new ResponseStatusException( HttpStatus.BAD_REQUEST, "invalid user type");
         }
         userRepository.save(user);
-        return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getType());
+        UserDTO userDTO1 = new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getType());
+        gradebookServiceProxy.addUser(userDTO1);
+        return userDTO1;
     }
 
     @PutMapping("/users")
@@ -75,8 +79,10 @@ public class UserController {
             // invalid type
             throw  new ResponseStatusException( HttpStatus.BAD_REQUEST, "invalid user type");
         }
+        UserDTO userDTO1 = new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getType());
         userRepository.save(user);
-        return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getType());
+        gradebookServiceProxy.updateUser(userDTO1);
+        return userDTO1;
     }
 
     @DeleteMapping("/users/{id}")
@@ -85,7 +91,6 @@ public class UserController {
         if (user!=null) {
             userRepository.delete(user);
         }
-
+        gradebookServiceProxy.deleteUser(id);
     }
-
 }

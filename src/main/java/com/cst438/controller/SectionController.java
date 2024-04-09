@@ -2,6 +2,7 @@ package com.cst438.controller;
 
 import com.cst438.domain.*;
 import com.cst438.dto.SectionDTO;
+import com.cst438.service.GradebookServiceProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +27,13 @@ public class SectionController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    GradebookServiceProxy gradebookServiceProxy;
+
 
     // ADMIN function to create a new section
     @PostMapping("/sections")
     public SectionDTO addSection(@RequestBody SectionDTO section) {
-
         Course course = courseRepository.findById(section.courseId()).orElse(null);
         if (course == null ){
             throw  new ResponseStatusException( HttpStatus.NOT_FOUND, "course not found "+section.courseId());
@@ -43,14 +46,13 @@ public class SectionController {
             throw  new ResponseStatusException( HttpStatus.NOT_FOUND, "year, semester invalid ");
         }
         s.setTerm(term);
-
         s.setSecId(section.secId());
         s.setBuilding(section.building());
         s.setRoom(section.room());
         s.setTimes(section.times());
 
         User instructor = null;
-        if (section.instructorEmail()==null || section.instructorEmail().equals("")) {
+        if (section.instructorEmail() == null || section.instructorEmail().isEmpty()) {
             s.setInstructor_email("");
         } else {
             instructor = userRepository.findByEmail(section.instructorEmail());
@@ -61,7 +63,7 @@ public class SectionController {
         }
 
         sectionRepository.save(s);
-        return new SectionDTO(
+        SectionDTO sectionDTO = new SectionDTO(
                 s.getSectionNo(),
                 s.getTerm().getYear(),
                 s.getTerm().getSemester(),
@@ -73,6 +75,8 @@ public class SectionController {
                 (instructor!=null) ? instructor.getName() : "",
                 (instructor!=null) ? instructor.getEmail() : ""
         );
+        gradebookServiceProxy.addSection(sectionDTO);
+        return sectionDTO;
     }
 
     // ADMIN function to update a section
@@ -98,6 +102,7 @@ public class SectionController {
             }
             s.setInstructor_email(section.instructorEmail());
         }
+        gradebookServiceProxy.updateSection(section);
         sectionRepository.save(s);
     }
 
@@ -109,6 +114,7 @@ public class SectionController {
         if (s != null) {
             sectionRepository.delete(s);
         }
+        gradebookServiceProxy.deleteSection(sectionno);
     }
 
 
@@ -179,7 +185,7 @@ public class SectionController {
         }
         return dto_list;
     }
-	
+
     @GetMapping("/sections/open")
     public List<SectionDTO> getOpenSectionsForEnrollment() {
 
