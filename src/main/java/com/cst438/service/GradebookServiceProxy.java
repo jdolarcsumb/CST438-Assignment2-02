@@ -10,34 +10,27 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
-
 @Service
 public class GradebookServiceProxy {
     /*
      * create or use existing message queue
      */
     Queue gradebookServiceQueue = new Queue("gradebook_service", true);
-
     @Bean
     public Queue createQueue() { return new Queue("registrar_service", true); }
-
     @Autowired
     RabbitTemplate rabbitTemplate;
-
     @Autowired
     EnrollmentRepository enrollmentRepository;
-
     @Autowired
     SectionRepository sectionRepository;
 
     public void addCourse(CourseDTO course) {
         sendMessage( "addCourse_" +asJsonString(course) );
     }
-
     public void updateCourse(CourseDTO course) {
         sendMessage("updateCourse_" +asJsonString(course) );
     }
-
     public void deleteCourse(String courseId) {sendMessage("deleteCourse_" +courseId);}
     public void addSection(SectionDTO s) {sendMessage("addSection_" +asJsonString(s));}
     public void updateSection(SectionDTO s) {sendMessage("updateSection_" +asJsonString(s));}
@@ -67,8 +60,7 @@ public class GradebookServiceProxy {
                     e.setGrade(dto.grade());
                     enrollmentRepository.save(e);
                 }
-            }
-            else if (parts[0].equals("enterFinalGradesForEnrollment")) {
+            } else if (parts[0].equals("enterFinalGradesForEnrollment")) {
                 EnrollmentDTO dto = fromJsonString(parts[1], EnrollmentDTO.class);
                 Enrollment e = enrollmentRepository.findById(dto.enrollmentId()).orElse(null);
                 if (e == null) {
@@ -77,9 +69,8 @@ public class GradebookServiceProxy {
                     e.setGrade(dto.grade());
                     enrollmentRepository.save(e);
                 }
-            }
-            else if (parts[0].equals("getSectionsForInstructor")) {
-
+            } else {
+                System.out.println("Command " + parts[0] + " not recognized");
             }
         } catch (Exception e) {
             System.out.println("Exception in receivedFromGradebook " + e.getMessage());
