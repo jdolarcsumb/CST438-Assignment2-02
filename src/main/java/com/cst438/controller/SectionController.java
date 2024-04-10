@@ -158,7 +158,7 @@ public class SectionController {
     @GetMapping("/sections")
     public List<SectionDTO> getSectionsForInstructor(
             @RequestParam("email") String instructorEmail,
-            @RequestParam("year") int year ,
+            @RequestParam("year") int year,
             @RequestParam("semester") String semester )  {
 
 
