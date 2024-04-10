@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Date;
 import java.util.List;
@@ -50,7 +49,7 @@ public class RegistrarServiceProxy {
         //TODO implement this message
         try {
             System.out.println("receive from Registrar " + message);
-            String[] parts = message.split("_", 3);
+            String[] parts = message.split("_", 2);
             String call = parts[0];
             if (call.equals("addCourse")) {            //addCourse
                 CourseDTO course = fromJsonString(parts[1], CourseDTO.class);
@@ -159,7 +158,7 @@ public class RegistrarServiceProxy {
                     System.out.println("Error receiveFromRegistrar: year, semester invalid ");
                 }
                 s.setTerm(term);
-
+                s.setSectionNo(section.secNo());
                 s.setSecId(section.secId());
                 s.setBuilding(section.building());
                 s.setRoom(section.room());
