@@ -160,6 +160,7 @@ public class RegistrarServiceProxy {
                 }
                 s.setTerm(term);
 
+                s.setSectionNo(section.secNo());
                 s.setSecId(section.secId());
                 s.setBuilding(section.building());
                 s.setRoom(section.room());
@@ -180,11 +181,13 @@ public class RegistrarServiceProxy {
 
             } else if (call.equals("updateSection")) {              //updateSection
                 SectionDTO section = fromJsonString(parts[1], SectionDTO.class);
-                int secID = section.secId();
-                Section s = sectionRepository.findById(secID).orElse(null);
+                int secN0 = section.secNo();
+                Section s = sectionRepository.findById(secN0).orElse(null);
                 if (s==null) {
-                    System.out.println("Error receiveFromRegistrar: section not found "+section.secNo());
+                    System.out.println("Error receiveFromRegistrar: section not found "+secN0);
                 }
+
+                s.setSectionNo(section.secNo());
                 s.setSecId(section.secId());
                 s.setBuilding(section.building());
                 s.setRoom(section.room());
