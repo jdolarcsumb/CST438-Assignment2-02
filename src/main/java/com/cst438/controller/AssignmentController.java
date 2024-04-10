@@ -85,7 +85,7 @@ public class AssignmentController {
                 a.getSection().getSecId(),
                 a.getSection().getSectionNo());
 
-        registrarServiceProxy.createAssignment(aDTO);
+        //registrarServiceProxy.createAssignment(aDTO);
         return aDTO;
     }
 
@@ -109,7 +109,7 @@ public class AssignmentController {
                 a.getSection().getCourse().getCourseId(),
                 a.getSection().getSecId(),
                 a.getSection().getSectionNo());
-        registrarServiceProxy.updateAssignment(aDTO);
+        //registrarServiceProxy.updateAssignment(aDTO);
         return aDTO;
     }
 
@@ -120,7 +120,7 @@ public class AssignmentController {
         Assignment a = assignmentRepository.findById(assignmentId).orElse(null);
         if (a != null) {
             assignmentRepository.delete(a);
-            registrarServiceProxy.deleteAssignment(assignmentId);
+            //registrarServiceProxy.deleteAssignment(assignmentId);
         }
     }
 
