@@ -1,0 +1,1289 @@
+{
+	"info": {
+		"_postman_id": "060e3f3e-705a-45bd-8b20-1fd9cd385626",
+		"name": "Gradebook Assignment CST438",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Tests\" tab**\n\nTests help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/b5f280a7-4b09-48ec-857f-0a7ed99d7ef8/U2NyZWVuc2hvdCAyMDIzLTAzLTI3IGF0IDkuNDcuMjggUE0ucG5n\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) in \"Tests\" to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19241046"
+	},
+	"item": [
+		{
+			"name": "Student",
+			"item": [
+				{
+					"name": "AssignmentsStudentView",
+					"item": [
+						{
+							"name": "Get assignments",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure data is received\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData[0].assignmentId).to.eql(1);",
+											"    pm.expect(jsonData[0].title).to.eql(\"db homework 1\");",
+											"    pm.expect(jsonData[0].score).to.eql(95);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/assignments?studentId={{studentId}}&year={{year}}&semester={{semester}}",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"assignments"
+									],
+									"query": [
+										{
+											"key": "studentId",
+											"value": "{{studentId}}"
+										},
+										{
+											"key": "year",
+											"value": "{{year}}"
+										},
+										{
+											"key": "semester",
+											"value": "{{semester}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CourseEnroll",
+					"item": [
+						{
+							"name": "Get open sections",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Should return an open section with data in it\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData[0].secNo).to.eql(6);",
+											"    pm.expect(jsonData[0].year).to.eql(2024);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/sections/open",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"sections",
+										"open"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST New enrollment for student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we get enrollment data back\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.studentId).to.eql(3);",
+											"    pm.expect(jsonData.name).to.eql(\"thomas edison\");",
+											"    ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/enrollments/sections/{{selectedSection}}?studentId={{studentId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"enrollments",
+										"sections",
+										"{{selectedSection}}"
+									],
+									"query": [
+										{
+											"key": "studentId",
+											"value": "{{studentId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Schedule View",
+					"item": [
+						{
+							"name": "Get Schedule for Student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Returned enrollment data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an(\"array\");",
+											"    pm.expect(jsonData[0].enrollmentId).to.be.a(\"number\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/enrollments?studentId=3&year={{year}}&semester={{semester}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"enrollments"
+									],
+									"query": [
+										{
+											"key": "studentId",
+											"value": "3"
+										},
+										{
+											"key": "year",
+											"value": "{{year}}"
+										},
+										{
+											"key": "semester",
+											"value": "{{semester}}"
+										}
+									]
+								},
+								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete enrollment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful DELETE request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/enrollments/{{enrollmentId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"enrollments",
+										"{{enrollmentId}}"
+									]
+								},
+								"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Transcript",
+					"item": [
+						{
+							"name": "Get transcript",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure data is received\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData[0].enrollmentId).to.eql(1);",
+											"    pm.expect(jsonData[0].studentId).to.eql(3);",
+											"    pm.expect(jsonData[0].grade).to.eql(\"A\");",
+											"    ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/transcripts?studentId={{studentId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"transcripts"
+									],
+									"query": [
+										{
+											"key": "studentId",
+											"value": "{{studentId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Instructor",
+			"item": [
+				{
+					"name": "AssignmentGrade",
+					"item": [
+						{
+							"name": "Get grades for an assignment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData[0].gradeId).to.eql(1);",
+											"    pm.expect(jsonData[0].score).to.eql(95);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/assignment/{{assignmentId}}/grades",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"assignment",
+										"{{assignmentId}}",
+										"grades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT Save new grades",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n\t{\n\t\t\"assignmentTitle\": \"db homework 1\",\n\t\t\"courseId\": \"cst363\",\n\t\t\"gradeId\": 1,\n\t\t\"score\": 95,\n\t\t\"sectionId\": 1,\n\t\t\"studentEmail\": \"tedison@csumb.edu\",\n\t\t\"studentName\": \"thomas edison\"\n\t}\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/grades",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"grades"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "AssignmentsView",
+					"item": [
+						{
+							"name": "GET assignments for a section",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an(\"array\");",
+											"    pm.expect(jsonData).to.have.lengthOf(2);",
+											"    pm.expect(jsonData[0]).to.be.an(\"object\");",
+											"    pm.expect(jsonData[0].id).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].title).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].dueDate).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].secId).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].secNo).to.be.a(\"number\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/sections/{{secNo}}/assignments",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"sections",
+										"{{secNo}}",
+										"assignments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT Save assignment changes",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an(\"object\");",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"    pm.expect(jsonData.title).to.be.a(\"string\");",
+											"    pm.expect(jsonData.dueDate).to.be.a(\"string\");",
+											"    pm.expect(jsonData.courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData.secId).to.be.a(\"number\");",
+											"    pm.expect(jsonData.secNo).to.be.a(\"number\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 1,\n    \"title\": \"db homework test\",\n    \"dueDate\": \"2024-02-01\",\n    \"courseId\": \"cst363\",\n    \"secId\": 1,\n    \"secNo\": 8\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/assignments",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"assignments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST Add new assignment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"    pm.expect(jsonData.title).to.be.a(\"string\");",
+											"    pm.expect(jsonData.dueDate).to.be.a(\"string\");",
+											"    pm.expect(jsonData.courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData.secId).to.be.a(\"number\");",
+											"    pm.expect(jsonData.secNo).to.be.a(\"number\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"test\",\n    \"dueDate\": \"2024-04-09\",\n    \"courseId\": \"cst363\",\n    \"secId\": 1,\n    \"secNo\": 8\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/assignments",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"assignments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE assignment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/assignments/{{assignmentId}}",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"assignments",
+										"{{assignmentId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "EnrollmentsView",
+					"item": [
+						{
+							"name": "Save grades for enrollment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"enrollmentId\": 2,\n        \"grade\": \"A\",\n        \"studentId\": 3,\n        \"name\": \"thomas edison\",\n        \"email\": \"tedison@csumb.edu\",\n        \"courseId\": \"cst363\",\n        \"sectionId\": 1,\n        \"sectionNo\": 8,\n        \"building\": \"052\",\n        \"room\": \"104\",\n        \"times\": \"M W 10:00-11:50\",\n        \"credits\": 4,\n        \"year\": 2024,\n        \"semester\": \"Spring\"\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/enrollments",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"enrollments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET enrolled students from section",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an(\"array\");",
+											"    pm.expect(jsonData).to.have.lengthOf(1);",
+											"    pm.expect(jsonData[0].enrollmentId).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].grade).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].studentId).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].name).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].email).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].sectionId).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].sectionNo).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].building).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].room).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].times).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].credits).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].year).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].semester).to.be.a(\"string\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/sections/{{secNo}}/enrollments",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"sections",
+										"{{secNo}}",
+										"enrollments"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "InstructorSectionsView",
+					"item": [
+						{
+							"name": "GET sections for year, semester, and instructor by email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an(\"array\");",
+											"    pm.expect(jsonData).to.have.lengthOf(3);",
+											"    pm.expect(jsonData[0].secNo).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].year).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].semester).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].secId).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].building).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].room).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].times).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].instructorName).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].instructorEmail).to.be.a(\"string\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{GRADEBOOK_SERVICE}}/sections?email={{email}}&year={{year}}&semester={{semester}}",
+									"host": [
+										"{{GRADEBOOK_SERVICE}}"
+									],
+									"path": [
+										"sections"
+									],
+									"query": [
+										{
+											"key": "email",
+											"value": "{{email}}"
+										},
+										{
+											"key": "year",
+											"value": "{{year}}"
+										},
+										{
+											"key": "semester",
+											"value": "{{semester}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "CoursesView",
+					"item": [
+						{
+							"name": "Get courses",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an(\"array\");",
+											"    pm.expect(jsonData).to.have.lengthOf(9);",
+											"    pm.expect(jsonData[0].courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].title).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].credits).to.be.a(\"number\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/courses",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT save course",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.a(\"object\");",
+											"    pm.expect(jsonData.courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData.title).to.be.a(\"string\");",
+											"    pm.expect(jsonData.credits).to.be.a(\"number\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"courseId\": \"cst238\",\n    \"title\": \"Introduction to Programming 2\",\n    \"credits\": 5\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/courses",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST Add course",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.a(\"object\");",
+											"    pm.expect(jsonData.courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData.title).to.be.a(\"string\");",
+											"    pm.expect(jsonData.credits).to.be.a(\"number\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"courseId\": \"23452435\",\n    \"title\": \"test\",\n    \"credits\": \"5\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/courses",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE course",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/courses/{{courseId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"courses",
+										"{{courseId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "SectionAdd",
+					"item": [
+						{
+							"name": "Add section",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.a(\"object\");",
+											"    pm.expect(jsonData.secNo).to.be.a(\"number\");",
+											"    pm.expect(jsonData.year).to.be.a(\"number\");",
+											"    pm.expect(jsonData.semester).to.be.a(\"string\");",
+											"    pm.expect(jsonData.courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData.secId).to.be.a(\"number\");",
+											"    pm.expect(jsonData.building).to.be.a(\"string\");",
+											"    pm.expect(jsonData.room).to.be.a(\"string\");",
+											"    pm.expect(jsonData.times).to.be.a(\"string\");",
+											"    pm.expect(jsonData.instructorName).to.be.a(\"string\");",
+											"    pm.expect(jsonData.instructorEmail).to.be.a(\"string\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"secNo\": \"\",\n    \"courseId\": \"cst438\",\n    \"secId\": \"1\",\n    \"year\": \"2024\",\n    \"semester\": \"Spring\",\n    \"building\": \"052\",\n    \"room\": \"222\",\n    \"times\": \"everyday\",\n    \"instructorName\": \"\",\n    \"instructorEmail\": \"dwisneski@csumb.edu\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/sections",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"sections"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "SectionsView",
+					"item": [
+						{
+							"name": "Get courses by courseId, year, semester",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an(\"array\");",
+											"    pm.expect(jsonData[0].secNo).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].year).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].semester).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].courseId).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].secId).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].building).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].room).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].times).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].instructorName).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].instructorEmail).to.be.a(\"string\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/courses/{{courseIdAdmin}}/sections?year={{year}}&semester={{semester}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"courses",
+										"{{courseIdAdmin}}",
+										"sections"
+									],
+									"query": [
+										{
+											"key": "year",
+											"value": "{{year}}"
+										},
+										{
+											"key": "semester",
+											"value": "{{semester}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete section by secNo",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/sections/{{secNo}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"sections",
+										"{{secNo}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "UsersView",
+					"item": [
+						{
+							"name": "GET Users",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an(\"array\");",
+											"    pm.expect(jsonData).to.have.lengthOf(4);",
+											"    pm.expect(jsonData[0].id).to.be.a(\"number\");",
+											"    pm.expect(jsonData[0].name).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].email).to.be.a(\"string\");",
+											"    pm.expect(jsonData[0].type).to.be.a(\"string\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Modify user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"    pm.expect(jsonData.email).to.be.a(\"string\");",
+											"    pm.expect(jsonData.type).to.be.a(\"string\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 1,\n    \"name\": \"david wisneskii\",\n    \"email\": \"dwisneski@csumb.edu\",\n    \"type\": \"INSTRUCTOR\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Ensure we received data\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"    pm.expect(jsonData.email).to.be.a(\"string\");",
+											"    pm.expect(jsonData.type).to.be.a(\"string\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"test3\",\n    \"email\": \"test3@email.com\",\n    \"type\": \"STUDENT\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/users/{{userId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "year",
+			"value": "2024"
+		},
+		{
+			"key": "semester",
+			"value": "Spring"
+		},
+		{
+			"key": "enrollmentId",
+			"value": "3"
+		},
+		{
+			"key": "studentId",
+			"value": "3"
+		},
+		{
+			"key": "selectedSection",
+			"value": "6"
+		},
+		{
+			"key": "GRADEBOOK_SERVICE",
+			"value": "http://localhost:8081"
+		},
+		{
+			"key": "assignmentId",
+			"value": "1"
+		},
+		{
+			"key": "secNo",
+			"value": "8"
+		},
+		{
+			"key": "email",
+			"value": "dwisneski@csumb.edu"
+		},
+		{
+			"key": "courseId",
+			"value": "cst238"
+		},
+		{
+			"key": "courseIdAdmin",
+			"value": "cst438"
+		},
+		{
+			"key": "userId",
+			"value": "4"
+		}
+	]
+}
