@@ -204,7 +204,15 @@ public class RegistrarServiceProxy {
             } else if (call.equals("deleteSection")) {              //deleteSection
                 sectionRepository.deleteById(Integer.valueOf(parts[1]));
             } else {
-                System.out.println("Error receiveFromRegistrar: Action not recognized");
+                if (parts.length >= 1)
+                {
+                    System.out.println(parts[0]);
+                    System.out.println("Error receiveFromRegistrar: Action not recognized");
+                }
+                if (parts.length >= 2)
+                    System.out.println(parts[1]);
+                if (parts.length >= 3)
+                    System.out.println(parts[2]);
             }
         } catch (Exception e) {
             System.out.println("Exception in receiveFromRegistrar " + e.getMessage());
