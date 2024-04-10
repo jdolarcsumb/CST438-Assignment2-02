@@ -58,7 +58,6 @@ public class AssignmentController {
                     a.getSection().getSecId(),
                     a.getSection().getSectionNo()));
         }
-        registrarServiceProxy.getAssignments(secNo);
         return dlist;
     }
 
@@ -154,7 +153,6 @@ public class AssignmentController {
                     a.getSection().getSecId(),
                     g.getScore()));
         }
-        registrarServiceProxy.getAssignmentGrades(assignmentId);
         return dlist;
     }
 
@@ -209,7 +207,6 @@ public class AssignmentController {
                     (grade!=null)? grade.getScore(): null ));
 
         }
-        registrarServiceProxy.getStudentAssignments(studentId, year, semester);
         return dlist;
     }
 
@@ -244,7 +241,6 @@ public class AssignmentController {
                     (instructor!=null) ? instructor.getEmail() : ""
             ));
         }
-        registrarServiceProxy.getSectionsForInstructor(instructorEmail, year, semester);
         return dto_list;
     }
 

@@ -19,10 +19,20 @@ import java.util.List;
 public class RegistrarServiceProxy {
 
     Queue registrarServiceQueue = new Queue("registrar_service", true);
+
+    @Autowired
     EnrollmentRepository enrollmentRepository;
+
+    @Autowired
     SectionRepository sectionRepository;
+
+    @Autowired
     CourseRepository courseRepository;
+
+    @Autowired
     UserRepository userRepository;
+
+    @Autowired
     TermRepository termRepository;
 
 
@@ -40,7 +50,7 @@ public class RegistrarServiceProxy {
         //TODO implement this message
         try {
             System.out.println("receive from Registrar " + message);
-            String[] parts = message.split(" ", 3);
+            String[] parts = message.split("_", 3);
             String call = parts[0];
             if (call.equals("addCourse")) {            //addCourse
                 CourseDTO course = fromJsonString(parts[1], CourseDTO.class);
@@ -62,8 +72,9 @@ public class RegistrarServiceProxy {
                     courseRepository.save(c);
                 }
             } else if (call.equals("enrollCourse")) {      //enrollCourse
-                int studentId = Integer.valueOf(parts[1]);
-                int sectionNo = Integer.valueOf(parts[2]);
+                EnrollmentDTO enrollmentDTO = fromJsonString(parts[1], EnrollmentDTO.class);
+                int studentId = enrollmentDTO.studentId();
+                int sectionNo = enrollmentDTO.sectionNo();
                 Enrollment e = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(studentId, sectionNo);
                 if (e!=null) {
                     System.out.println("Error receiveFromRegistrar: already enrolled in this section");
@@ -116,6 +127,7 @@ public class RegistrarServiceProxy {
                 userRepository.save(user);
             } else if (call.equals("updateUser")) {             //updateUser
                 UserDTO userDTO = fromJsonString(parts[1], UserDTO.class);
+                System.out.println(userDTO + " " + userDTO.name() + " " + userDTO.id() + " " + userDTO.type());
                 User user = userRepository.findById(userDTO.id()).orElse(null);
                 if (user==null) {
                     System.out.println("Error receiveFromRegistrar: User not found " + userDTO.id());
@@ -167,7 +179,8 @@ public class RegistrarServiceProxy {
 
             } else if (call.equals("updateSection")) {              //updateSection
                 SectionDTO section = fromJsonString(parts[1], SectionDTO.class);
-                Section s = sectionRepository.findById(section.secNo()).orElse(null);
+                int secID = section.secId();
+                Section s = sectionRepository.findById(secID).orElse(null);
                 if (s==null) {
                     System.out.println("Error receiveFromRegistrar: section not found "+section.secNo());
                 }
@@ -189,20 +202,6 @@ public class RegistrarServiceProxy {
                 sectionRepository.save(s);
             } else if (call.equals("deleteSection")) {              //deleteSection
                 sectionRepository.deleteById(Integer.valueOf(parts[1]));
-            } else if (call.equals("getAllCourses")) {
-
-            } else if (call.equals("getAllTerms")) {
-
-            } else if (call.equals("getSections")) {
-
-            } else if (call.equals("getOpenSectionsForEnrollment")) {
-
-            } else if (call.equals("getTranscript")) {
-
-            } else if (call.equals("getSchedule")) {
-
-            } else if (call.equals("findAllUsers")) {
-
             } else {
                 System.out.println("Error receiveFromRegistrar: Action not recognized");
             }
@@ -232,45 +231,25 @@ public class RegistrarServiceProxy {
 
     // Add functions for Gradebook service here
     // Example:
-    public void getSectionsForInstructor(String instructorEmail, int year, String semester) {
-        sendMessage("getSectionsForInstructor " +  asJsonString(instructorEmail) + " " + year + " " + asJsonString(semester));
-    }
-
-    public void getEnrollments(int sectionNo) {
-        sendMessage("getSectionsForInstructor " +  sectionNo);
-    }
 
     public void enterFinalGradesForEnrollment(List<EnrollmentDTO> dlist) {
-        sendMessage("enterFinalGradesForEnrollment " +  asJsonString(dlist));
+        sendMessage("enterFinalGradesForEnrollment_" +  asJsonString(dlist));
     }
 
     public void createAssignment(AssignmentDTO a) {
-        sendMessage("createAssignment " +  asJsonString(a));
+        sendMessage("createAssignment_" +  asJsonString(a));
     }
 
     public void updateAssignment(AssignmentDTO a) {
-        sendMessage("updateAssignment " +  asJsonString(a));
+        sendMessage("updateAssignment_" +  asJsonString(a));
     }
 
     public void deleteAssignment(int assignmentId) {
-        sendMessage("deleteAssignment " +  assignmentId);
+        sendMessage("deleteAssignment_" +  assignmentId);
     }
 
     public void updateGrades(List<GradeDTO> dlist) {
-        sendMessage("updateGrades " +  asJsonString(dlist));
+        sendMessage("updateGrades_" +  asJsonString(dlist));
     }
-
-    public void getAssignmentGrades(int assignmentId) {
-        sendMessage("updateGrades " +  assignmentId);
-    }
-
-    public void getStudentAssignments(int studentId, int year, String semester) {
-        sendMessage("getSectionsForInstructor " +  studentId + " " + year + " " + asJsonString(semester));
-    }
-
-    public void getAssignments(int secNo) {
-        sendMessage("getAssignments " +  secNo);
-    }
-
 
 }
