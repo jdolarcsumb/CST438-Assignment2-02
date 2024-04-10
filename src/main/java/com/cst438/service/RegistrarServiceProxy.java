@@ -94,6 +94,7 @@ public class RegistrarServiceProxy {
                     System.out.println("Error receiveFromRegistrar: cannot enroll in this section due to date");
                 }
                 e.setSection(section);
+                e.setEnrollmentId(enrollmentDTO.enrollmentId());
                 enrollmentRepository.save(e);
             } else if (call.equals("dropCourse")) {        //dropCourse
                 Enrollment e = enrollmentRepository.findById(Integer.valueOf(parts[1])).orElse(null);
@@ -111,7 +112,7 @@ public class RegistrarServiceProxy {
                 User user = new User();
                 user.setName(userDTO.name());
                 user.setEmail(userDTO.email());
-
+                user.setId(userDTO.id());
                 // create password and encrypt it
                 String password = userDTO.name() + "2024";
                 String enc_password = encoder.encode(password);
@@ -127,12 +128,12 @@ public class RegistrarServiceProxy {
                 userRepository.save(user);
             } else if (call.equals("updateUser")) {             //updateUser
                 UserDTO userDTO = fromJsonString(parts[1], UserDTO.class);
-                System.out.println(userDTO + " " + userDTO.name() + " " + userDTO.id() + " " + userDTO.type());
                 User user = userRepository.findById(userDTO.id()).orElse(null);
                 if (user==null) {
                     System.out.println("Error receiveFromRegistrar: User not found " + userDTO.id());
                 }
                 user.setName(userDTO.name());
+                user.setId(userDTO.id());
                 user.setEmail(userDTO.email());
                 user.setType(userDTO.type());
                 if (!userDTO.type().equals("STUDENT") &&
