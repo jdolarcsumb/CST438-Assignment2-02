@@ -31,23 +31,23 @@ public class GradebookServiceProxy {
     SectionRepository sectionRepository;
 
     public void addCourse(CourseDTO course) {
-        sendMessage( "addCourse " +asJsonString(course) );
+        sendMessage( "addCourse_" +asJsonString(course) );
     }
 
     public void updateCourse(CourseDTO course) {
-        sendMessage("updateCourse " +asJsonString(course) );
+        sendMessage("updateCourse_" +asJsonString(course) );
     }
 
-    public void deleteCourse(String courseId) {sendMessage("dropCourse " +courseId);}
-    public void addSection(SectionDTO s) {sendMessage("addSection" +asJsonString(s));}
-    public void updateSection(SectionDTO s) {sendMessage("updateSection " +asJsonString(s));}
-    public void deleteSection(int sectionNo) {sendMessage("deleteSection " +sectionNo);}
-    public void addUser(UserDTO user) {sendMessage("createUser" + asJsonString(user));}
-    public void updateUser (UserDTO user) { sendMessage("updateUser " +asJsonString(user));}
-    public void deleteUser (int userId) { sendMessage( "deleteUser " +userId);}
-    public void enrollCourse(EnrollmentDTO e) { sendMessage("enrollCourse " +asJsonString(e));}
+    public void deleteCourse(String courseId) {sendMessage("deleteCourse_" +courseId);}
+    public void addSection(SectionDTO s) {sendMessage("addSection_" +asJsonString(s));}
+    public void updateSection(SectionDTO s) {sendMessage("updateSection_" +asJsonString(s));}
+    public void deleteSection(int sectionNo) {sendMessage("deleteSection_" +sectionNo);}
+    public void addUser(UserDTO user) {sendMessage("createUser_" + asJsonString(user));}
+    public void updateUser (UserDTO user) { sendMessage("updateUser_" +asJsonString(user));}
+    public void deleteUser (int userId) { sendMessage( "deleteUser_" +userId);}
+    public void enrollCourse(EnrollmentDTO e) { sendMessage("enrollCourse_" +asJsonString(e));}
     public void dropCourse(int enrollmentId) {
-        sendMessage("deleteEnrollment " +enrollmentId);
+        sendMessage("dropCourse_" +enrollmentId);
     }
 
     @RabbitListener(queues = "registrar_service")
@@ -57,7 +57,7 @@ public class GradebookServiceProxy {
 
         try {
             System.out.println("receive from Gradebook " + message);
-            String[] parts = message.split(" ", 2);
+            String[] parts = message.split("_", 2);
             if (parts[0].equals("updateEnrollment")){
                 EnrollmentDTO dto = fromJsonString(parts[1], EnrollmentDTO.class);
                 Enrollment e = enrollmentRepository.findById(dto.enrollmentId()).orElse(null);
