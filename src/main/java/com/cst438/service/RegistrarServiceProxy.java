@@ -94,6 +94,7 @@ public class RegistrarServiceProxy {
                     System.out.println("Error receiveFromRegistrar: cannot enroll in this section due to date");
                 }
                 e.setSection(section);
+                e.setEnrollmentId(enrollmentDTO.enrollmentId());
                 enrollmentRepository.save(e);
             } else if (call.equals("dropCourse")) {        //dropCourse
                 Enrollment e = enrollmentRepository.findById(Integer.valueOf(parts[1])).orElse(null);
