@@ -7,10 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import static java.lang.Integer.parseInt;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -30,21 +34,25 @@ public class StudentController {
   // user must be student
   // studentId will be temporary until Login security is implemented
   @GetMapping("/transcripts")
-  public List<EnrollmentDTO> getTranscript(@RequestParam("studentId") Optional<Integer> studentId) {
+  @PreAuthorize("hasAuthority('SCOPE_ROLE_STUDENT')")
+  //public List<EnrollmentDTO> getTranscript(@RequestParam("studentId") Optional<Integer> studentId) {
+  public List<EnrollmentDTO> getTranscript(Principal principal) {
+    String studentId = principal.getName();
+    System.out.println(studentId);
     if (studentId.isEmpty()){
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "must have request param for studentId");
     }
-    User student = userRepository.findById(studentId.get()).orElse(null);
+    User student = userRepository.findById(parseInt(studentId)).orElse(null);
     if (student == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user id not found");
     }
-    List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(studentId.get());
+    List<Enrollment> enrollments = enrollmentRepository.findEnrollmentsByStudentIdOrderByTermId(parseInt(studentId));
     List<EnrollmentDTO> dlist = new ArrayList<>();
     for (Enrollment e : enrollments) {
       dlist.add( new EnrollmentDTO(
               e.getEnrollmentId(),
               e.getGrade(),
-              studentId.get(),
+              parseInt(studentId),
               student.getName(),
               student.getEmail(),
               e.getSection().getCourse().getCourseId(),
