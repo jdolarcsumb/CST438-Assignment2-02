@@ -60,8 +60,11 @@ public class LoginController {
 	@GetMapping("/users/{userId}")
 	@PreAuthorize("hasAnyAuthority('SCOPE_ROLE_STUDENT', 'SCOPE_ROLE_ADMIN', 'SCOPE_ROLE_INSTRUCTOR')")
 	public User getUserDetails(@PathVariable("userId") int userId) {
-		return userRepository.findById(userId)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+		User user = userRepository.findById(userId).orElse(null);
+		if (user == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id not found");
+		}
+		return user;
 	}
 
 }
