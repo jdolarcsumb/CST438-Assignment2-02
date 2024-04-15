@@ -45,7 +45,7 @@ public class LoginController {
 	@PutMapping("/users/{userId}")
 	@PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
 	public User updateUser(@PathVariable("userId") int userId, @RequestBody User user) {
-		user.setUserId(userId);
+		user.setId(userId);
 		return userRepository.save(user);
 	}
 
