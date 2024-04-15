@@ -5,6 +5,7 @@ import com.cst438.dto.AssignmentDTO;
 import com.cst438.dto.AssignmentStudentDTO;
 import com.cst438.dto.GradeDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,9 @@ public class AssignmentController {
 
     @Autowired
     EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     // instructor lists assignments for a section.  Assignments ordered by due date.
     // logged in user must be the instructor for the section
@@ -166,27 +171,26 @@ public class AssignmentController {
     // student lists their assignments/grades for an enrollment ordered by due date
     // student must be enrolled in the section
     @GetMapping("/assignments")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_STUDENT')")
     public List<AssignmentStudentDTO> getStudentAssignments(
-            @RequestParam("studentId") int studentId,
+            Principal principal,
             @RequestParam("year") int year,
             @RequestParam("semester") String semester) {
 
         // check that this enrollment is for the logged in user student.
+        User student = userRepository.findByEmail(principal.getName());
 
         List<AssignmentStudentDTO> dlist = new ArrayList<>();
-        List<Assignment> alist = assignmentRepository.findByStudentIdAndYearAndSemesterOrderByDueDate(studentId, year, semester);
+        List<Assignment> alist = assignmentRepository.findByStudentIdAndYearAndSemesterOrderByDueDate(student.getId(), year, semester);
         for (Assignment a : alist) {
 
-            Enrollment e = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(a.getSection().getSectionNo(), studentId);
+            Enrollment e = enrollmentRepository.findEnrollmentBySectionNoAndStudentId(a.getSection().getSectionNo(), student.getId());
             if (e==null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "enrollment not found studentId:"+studentId+" sectionNo:"+a.getSection().getSectionNo());
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "enrollment not found studentId:"+student.getId()+" sectionNo:"+a.getSection().getSectionNo());
             }
 
             // if assignment has been graded, include the score
             Grade grade = gradeRepository.findByEnrollmentIdAndAssignmentId( e.getEnrollmentId(), a.getAssignmentId());
-
-            System.out.println(grade);
-
             dlist.add(new AssignmentStudentDTO(
                     a.getAssignmentId(),
                     a.getTitle(),
