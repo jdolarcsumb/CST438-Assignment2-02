@@ -34,37 +34,4 @@ public class LoginController {
 		return new LoginDTO(token, user.getType());
 	}
 
-	// ADMIN function to create a new user
-	@PostMapping("/users")
-	@PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-	public User createUser(@RequestBody User user) {
-		return userRepository.save(user);
-	}
-
-	// ADMIN function to update a user
-	@PutMapping("/users/{userId}")
-	@PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-	public User updateUser(@PathVariable("userId") int userId, @RequestBody User user) {
-		user.setId(userId);
-		return userRepository.save(user);
-	}
-
-	// ADMIN function to delete a user
-	@DeleteMapping("/users/{userId}")
-	@PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-	public void deleteUser(@PathVariable("userId") int userId) {
-		userRepository.deleteById(userId);
-	}
-
-	// Get user details
-	@GetMapping("/users/{userId}")
-	@PreAuthorize("hasAnyAuthority('SCOPE_ROLE_STUDENT', 'SCOPE_ROLE_ADMIN', 'SCOPE_ROLE_INSTRUCTOR')")
-	public User getUserDetails(@PathVariable("userId") int userId) {
-		User user = userRepository.findById(userId).orElse(null);
-		if (user == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id not found");
-		}
-		return user;
-	}
-
 }
