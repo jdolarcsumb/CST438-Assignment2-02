@@ -27,8 +27,8 @@ create table section (
     room varchar(10),
     times varchar(25),
     instructor_email varchar(50),
-    foreign key(course_id) references course(course_id),
-    foreign key(term_id) references term(term_id)
+    foreign key(course_id) references course(course_id) on delete cascade ,
+    foreign key(term_id) references term(term_id) on delete cascade
 );
 
 create sequence user_seq;
@@ -50,8 +50,8 @@ create table enrollment (
     grade varchar(5),
     section_no int not null,
     user_id int not null,
-    foreign key(section_no) references section(section_no),
-    foreign key(user_id) references user_table(id)
+    foreign key(section_no) references section(section_no) on delete cascade ,
+    foreign key(user_id) references user_table(id) on delete cascade
 );
 
 create sequence assignment_seq;
@@ -62,7 +62,7 @@ create table assignment (
     section_no int not null,
     title varchar(250) not null,
     due_date Date,
-    foreign key (section_no) references section(section_no)
+    foreign key (section_no) references section(section_no) on delete cascade
 );
 
 create sequence grade_seq;
@@ -73,6 +73,6 @@ create table grade (
     enrollment_id int not null,
     assignment_id int not null,
     score int check (score between 0 and 100),
-    foreign key(enrollment_id) references enrollment(enrollment_id),
-    foreign key(assignment_id) references assignment(assignment_id)
+    foreign key(enrollment_id) references enrollment(enrollment_id) on delete cascade ,
+    foreign key(assignment_id) references assignment(assignment_id) on delete cascade
 );

@@ -123,6 +123,7 @@ public class SectionController {
 
     // get Sections with query parms courseId, year, semester
     @GetMapping("/courses/{courseId}/sections")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public List<SectionDTO> getSections(
             @PathVariable("courseId") String courseId,
             @RequestParam("year") int year ,
@@ -171,7 +172,7 @@ public class SectionController {
         for (Section s : sections) {
             User instructor = null;
             if (s.getInstructorEmail()!=null) {
-                instructor = userRepository.findByEmail(s.getInstructorEmail());
+                instructor = userRepository.findByEmail(instructorEmail);
             }
             dto_list.add(new SectionDTO(
                     s.getSectionNo(),
