@@ -49,20 +49,21 @@ public class AssignmentControllerUnitTest {
 
     @Test
     public void gradeAssignment() throws Exception {
-        http = mockMvc.perform(MockMvcRequestBuilders.get(grade_httpString0)).andReturn().getResponse();
+        http = mockMvc.perform(MockMvcRequestBuilders.put(assignmentString).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO1)))
+                .andReturn().getResponse();
         assertEquals(200, http.getStatus());
 
         http0 = mockMvc.perform(MockMvcRequestBuilders.post(gradeString).accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO)))
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO1)))
                 .andReturn().getResponse();
-
         assertEquals(200, http.getStatus());
     }
 
     @Test
     public void addAssignmentInvalidSectionNumber() throws Exception {
         http = mockMvc.perform(MockMvcRequestBuilders.post(assignmentString).accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDTO1)))
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(assignmentDT0)))
                 .andReturn().getResponse();
 
         // Check the response code for 200 meaning OK
@@ -78,6 +79,5 @@ public class AssignmentControllerUnitTest {
         // Check the response code for 200 meaning OK
         assertEquals(200, http.getStatus());
     }
-
 
 }

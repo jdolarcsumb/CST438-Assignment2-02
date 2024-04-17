@@ -26,7 +26,7 @@ public class EnrollmentControllerUnitTest {
 
     EnrollmentDTO enrollmentDTO = new EnrollmentDTO(
             1, "A", 5, "John Smith", "jsmith@csumb.edu", "cst499",
-            6, 6, "024", "101", "T W 10:00-11:50", 3, 2023, "Spring"
+            2, 6, "024", "101", "T W 10:00-11:50", 3, 2023, "Spring"
     );
 
     EnrollmentDTO enrollmentDT0 = new EnrollmentDTO(
@@ -72,6 +72,8 @@ public class EnrollmentControllerUnitTest {
         http = mockMvc.perform(MockMvcRequestBuilders.post(enSecString).accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
                 .andReturn().getResponse();
+
+        System.out.println(http);
 
         assertEquals(200, http.getStatus());
     }
