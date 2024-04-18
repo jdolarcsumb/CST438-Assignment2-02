@@ -66,17 +66,50 @@ public class AssignmentControllerSystemTest {
 
     @Test
     public void instructorAddsNewAssignmentSuccessfully() throws InterruptedException {
-        WebElement addAssignmentButton = driver.findElement(By.id("addAssignment"));
-        addAssignmentButton.click();
+        // This tests for enrollment of student
+        // Do this test on INSTRUCTOR
+
+        driver.findElement(By.id("year")).sendKeys("2024");
+        driver.findElement(By.id("semester")).sendKeys("Spring");
+        driver.findElement(By.id("sections")).click();
         Thread.sleep(SLEEP_DURATION);
 
-        driver.findElement(By.id("assignmentTitle")).sendKeys("New Assignment");
-        driver.findElement(By.id("assignmentDescription")).sendKeys("Description of the new assignment");
-        driver.findElement(By.id("dueDate")).sendKeys("2024-12-31");
-        driver.findElement(By.id("submitButton")).click();
+        WebElement row438 = driver.findElement(By.xpath("//tr[td='cst438']"));
+        List<WebElement> lynx = row438.findElements(By.id("assign"));
+        // assignments is the second link
+        assertEquals(1, lynx.size());
+        lynx.get(0).click();
         Thread.sleep(SLEEP_DURATION);
 
-        String successMessage = driver.findElement(By.id("successMessage")).getText();
-        assertTrue(successMessage.contains("Assignment added successfully"));
+        driver.findElement(By.id("addAssign")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        driver.findElement(By.id("title")).sendKeys("Some stuff");
+        driver.findElement(By.id("dueDate")).sendKeys("2024-04-20");
+        driver.findElement(By.id("save")).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        String message = driver.findElement(By.id("message")).getText();
+        assertTrue(message.startsWith("Assignment created"));
+
+        WebElement target = driver.findElement(By.xpath("//tr[td='Some stuff']"));
+        List<WebElement> buttons = target.findElements(By.tagName("button"));
+        // delete is the third button
+        assertEquals(3, buttons.size());
+        buttons.get(2).click();
+        Thread.sleep(SLEEP_DURATION);
+        // find the YES to confirm button
+        List<WebElement> confirmButtons = driver
+                .findElement(By.className("react-confirm-alert-button-group"))
+                .findElements(By.tagName("button"));
+        assertEquals(2, confirmButtons.size());
+        confirmButtons.get(0).click();
+        Thread.sleep(SLEEP_DURATION);
+
+        message = driver.findElement(By.id("message")).getText();
+        assertTrue(message.startsWith("Assignment deleted"));
+
+        Thread.sleep(SLEEP_DURATION);
+
     }
 }
