@@ -67,10 +67,8 @@ public class EnrollmentControllerSystemTest {
 
     @Test
     public void systemTestEnrollment() throws Exception {
-        // add a section for cst499 Spring 2024 term
-        // verify section shows on the list of sections for Spring 2024
-        // delete the section
-        // verify the section is gone
+        // This tests for enrollment of student
+        // Do this test on ADMIN
 
 
         // click link to navigate to Sections
