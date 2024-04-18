@@ -64,7 +64,7 @@ public class StudentControllerSystemTest {
     @Test
     public void systemTestAddStudent() throws Exception {
         //Add to student user to Database
-        //Do this test on admin
+        //Do this test on ADMIN
 
         WebElement we = driver.findElement(By.id("users"));
         we.click();
