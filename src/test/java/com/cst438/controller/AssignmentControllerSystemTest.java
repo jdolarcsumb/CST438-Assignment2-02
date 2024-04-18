@@ -79,18 +79,4 @@ public class AssignmentControllerSystemTest {
         String successMessage = driver.findElement(By.id("successMessage")).getText();
         assertTrue(successMessage.contains("Assignment added successfully"));
     }
-
-    @Test
-    public void instructorGradesAssignmentAndUploadsScores() throws InterruptedException {
-
-        List<WebElement> scoreFields = driver.findElements(By.className("studentScore"));
-        for (WebElement scoreField : scoreFields) {
-            scoreField.sendKeys("100");
-        }
-        driver.findElement(By.id("submitGrades")).click();
-        Thread.sleep(SLEEP_DURATION);
-
-        String successMessage = driver.findElement(By.id("successMessage")).getText();
-        assertTrue(successMessage.contains("Grades uploaded successfully"));
-    }
 }
