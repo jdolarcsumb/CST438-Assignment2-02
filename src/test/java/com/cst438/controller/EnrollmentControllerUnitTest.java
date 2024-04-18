@@ -73,8 +73,6 @@ public class EnrollmentControllerUnitTest {
                         .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
                 .andReturn().getResponse();
 
-        System.out.println(http);
-
         assertEquals(200, http.getStatus());
     }
 

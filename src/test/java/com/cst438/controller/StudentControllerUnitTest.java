@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static com.cst438.test.utils.TestUtils.asJsonString;
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockMvc
@@ -26,11 +28,20 @@ public class StudentControllerUnitTest {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
-    EnrollmentDTO enrollmentDTO = new EnrollmentDTO(0, "A", 3, "John Doe", "jdoe@example.com", "cst101", 1, 8, "Library", "101", "T Th 9:00-10:15", 3, 2023, "Fall");
+    EnrollmentDTO enrollmentDTO = new EnrollmentDTO(
+            1, "A", 3, "John Smith", "jsmith@csumb.edu", "cst499",
+            2, 6, "024", "101", "T W 10:00-11:50", 3, 2023, "Spring"
+    );
+
+    EnrollmentDTO enrollmentDT0 = new EnrollmentDTO(
+            2, "B", 2, "John Doe", "jdoe@csumb.edu", "cst101",
+            1, 3, "030", "102", "T W 10:00-11:50", 3, 2024, "Fall"
+    );
+
     int secN0 = enrollmentDTO.sectionNo();
     int studentId = enrollmentDTO.studentId();
     MockHttpServletResponse http;
-    String esString = "/enrollments/sections/"+secN0;
+    String esString = "/enrollments/sections/"+secN0+"?studentId="+studentId;
 
     @Test
     public void enrollStudent() throws Exception {
@@ -41,13 +52,21 @@ public class StudentControllerUnitTest {
         assertEquals(200, http.getStatus());
     }
 
+    //Do this test by itself; it works.
     @Test
     public void enrollStudentAlreadyEnrolled() throws Exception {
         http = mockMvc.perform(MockMvcRequestBuilders.post(esString).accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDTO)))
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDT0)))
+                .andReturn().getResponse();
+
+        assertEquals(200, http.getStatus());
+
+        http = mockMvc.perform(MockMvcRequestBuilders.post(esString).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(enrollmentDT0)))
                 .andReturn().getResponse();
 
         assertNotEquals(200, http.getStatus());
+
     }
 
     private static String asJsonString(final Object obj) {
