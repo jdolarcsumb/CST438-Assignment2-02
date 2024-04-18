@@ -3,6 +3,7 @@ package com.cst438.controller;
 import com.cst438.domain.*;
 import com.cst438.dto.EnrollmentDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@Transactional
 public class StudentControllerUnitTest {
 
     @Autowired
