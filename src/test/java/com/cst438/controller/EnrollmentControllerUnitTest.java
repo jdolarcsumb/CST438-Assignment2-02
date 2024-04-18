@@ -25,12 +25,12 @@ public class EnrollmentControllerUnitTest {
     MockHttpServletResponse http;
 
     EnrollmentDTO enrollmentDTO = new EnrollmentDTO(
-            1, "A", 5, "John Smith", "jsmith@csumb.edu", "cst499",
+            1, "A", 3, "John Smith", "jsmith@csumb.edu", "cst499",
             2, 6, "024", "101", "T W 10:00-11:50", 3, 2023, "Spring"
     );
 
     EnrollmentDTO enrollmentDT0 = new EnrollmentDTO(
-            1, "B", 5, "John Smith", "jsmith@csumb.edu", "cst499",
+            1, "B", 3, "John Smith", "jsmith@csumb.edu", "cst499",
             999, 999, "024", "101", "T W 10:00-11:50", 3, 2023, "Spring"
     );
 
