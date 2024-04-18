@@ -62,14 +62,10 @@ public class StudentControllerSystemTest {
     }
 
     @Test
-    public void systemTestStudent() throws Exception {
-        // add a section for cst499 Spring 2024 term
-        // verify section shows on the list of sections for Spring 2024
-        // delete the section
-        // verify the section is gone
+    public void systemTestAddStudent() throws Exception {
+        //Add to student user to Database
+        //Do this test on admin
 
-
-        // click link to navigate to Sections
         WebElement we = driver.findElement(By.id("users"));
         we.click();
         Thread.sleep(SLEEP_DURATION);
